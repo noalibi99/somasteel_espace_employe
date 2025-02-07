@@ -84,3 +84,55 @@
         </tbody>
     </table>
 </div>
+
+<div class="modal fade" id="editShiftModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editShiftModalLabel" aria-hidden="true">
+    <meta name="shifts-route" content="{{ route('shifts.index') }}">
+    <div class="modal-dialog">
+        <form id="shiftForm">
+            @csrf
+            <input type="hidden" id="shift_id">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h1 class="modal-title fs-5">Gestion des Horaires (Shifts)</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Table of Shifts -->
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shiftTableBody"></tbody>
+                    </table>
+
+                    <!-- Form for Add/Edit Shift -->
+                    
+                    <div class="mb-3 form-floating">
+                        <input type="text" id="name" class="form-control" placeholder="" disabled>
+                        <label for="name">Nom</label>
+                    </div>
+                    
+                    <div class="mb-3 form-floating">
+                        <input type="time" id="start_time" class="form-control" placeholder="" required>
+                        <label for="start_time">Heure de début</label>
+                    </div>
+                    
+                    <div class="mb-3 form-floating">
+                        <input type="time" id="end_time" class="form-control" placeholder="" required>
+                        <label for="end_time">Heure de fin</label>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveShift">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -15,7 +15,7 @@ use App\Http\Controllers\DemandesController;
 use App\Http\Controllers\DemandesCongeController;
 use App\Http\Controllers\AnnuaireController;
 use App\Http\Controllers\AbsenceController;
-
+use App\Http\Controllers\ShiftController;
 
 use Illuminate\Support\Facades\DB;
 
@@ -78,6 +78,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/Annuaire/delete/{employee_id}', [AnnuaireController::class, 'destroyEmp'])->name('annuaire.employee.destroy');
         Route::post('/Annuaire/{projet}/{depart}/register', [AnnuaireController::class, 'storeEmployee'])->name('annuaire.employee.register');
         Route::put('/setResponsable/{id}/{depart}/{projet}', [AnnuaireController::class, 'updateResponsible'])->name('annuaire.employee.setResponsable');
+
+
+        Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts.index');
+        Route::get('/shifts/{shift}', [ShiftController::class, 'show']);
+        Route::post('/shifts', [ShiftController::class, 'store']);
+        Route::put('/shifts/{id}', [ShiftController::class, 'update']);
+        Route::delete('/shifts/{id}', [ShiftController::class, 'destroy']);
+
         //password
         //Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
         //Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -85,6 +93,7 @@ Route::middleware('auth')->group(function () {
         //Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
     });
 });
+
 Route::get('/download-app', [HomeController::class, 'getApp'])->name('download.app');
 
 Route::get('/', function () {

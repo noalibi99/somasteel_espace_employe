@@ -30,6 +30,115 @@ $(document).ready(function() {
    filterTable(tableId); // Pass the correct table ID
 });
 
+// shifts management 
+loadShifts();
+
+   function loadShifts() {
+      let shiftsUrl = $('meta[name="shifts-route"]').attr("content"); // Get the route from meta tag
+      $.get(shiftsUrl, function (data) {
+         let tableRows = "";
+         $.each(data, function (index, shift) {
+            tableRows += `
+                  <tr>
+                     <td>${shift.name}</td>
+                     <td>${shift.start_time}</td>
+                     <td>${shift.end_time}</td>
+                     <td>
+                        <button type="button" class="btn btn-warning btn-sm editShift" data-id="${shift.id}">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm deleteShift" data-id="${shift.id}">Delete</button>
+                     </td>
+                  </tr>`;
+         });
+         $("#shiftTableBody").html(tableRows);
+      });
+   }
+
+   $.ajaxSetup({
+      headers: {
+         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+      }
+   });
+   $(document).on("click", ".editShift", function () {
+      let id = $(this).data("id");
+      let shiftsUrl = $('meta[name="shifts-route"]').attr("content"); // Get base URL from meta tag
+      let url = shiftsUrl + "/" + id; // Construct the update URL dynamically
+  
+      $.get(url, function (shift) {
+          $("#shift_id").val(shift.id); // Store shift ID for updating
+          $("#name").val(shift.name);
+          $("#start_time").val(shift.start_time);
+          $("#end_time").val(shift.end_time);
+  
+          $("#saveShift").data("update-url", url); // Store update URL in button
+          loadShifts(); // Refresh shift list
+      });
+  });
+  
+$("#saveShift").click(function () {
+    let id = $("#shift_id").val();
+    let url = id ? "/shifts/" + id : "/shifts"; // Change URL dynamically
+    let method = id ? "PUT" : "POST"; // Change method dynamically
+
+    $.ajax({
+        url: url,
+        type: method,
+        data: {
+            _token: $('meta[name="csrf-token"]').attr("content"), // CSRF token
+            name: $("#name").val(),
+            start_time: $("#start_time").val(),
+            end_time: $("#end_time").val(),
+        },
+        success: function () {
+            $("#shiftForm")[0].reset(); // Reset form
+            $("#shift_id").val(""); // Clear ID to switch back to POST
+            loadShifts(); // Refresh shift list
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText);
+        }
+    });
+});
+
+  
+$(document).on("click", ".deleteShift", function () {
+   let id = $(this).data("id");
+
+   Swal.fire({
+       title: "Êtes-vous sûr ?",
+       text: "Cette action est irréversible !",
+       icon: "warning",
+       showCancelButton: true,
+       confirmButtonColor: "#d33",
+       cancelButtonColor: "#3085d6",
+       confirmButtonText: "Oui, supprimer",
+       cancelButtonText: "Annuler"
+   }).then((result) => {
+       if (result.isConfirmed) {
+           $.ajax({
+               url: "/shifts/" + id,
+               type: "DELETE",
+               success: function () {
+                   Swal.fire("Supprimé!", "Le shift a été supprimé.", "success");
+                   loadShifts();
+               },
+               error: function (xhr) {
+                   console.log(xhr.responseText);
+               }
+           });
+       }
+   });
+});
+
+  $("#start_time, #end_time").on("change", function () {
+      let startTime = $("#start_time").val();
+      let endTime = $("#end_time").val();
+
+      if (startTime && endTime) {
+         // Format the name as [start_time - end_time]
+         let formattedName = `[${startTime} - ${endTime}]`;
+         $("#name").val(formattedName); // Set the generated name to the input field
+      }
+   });
 });
 
 

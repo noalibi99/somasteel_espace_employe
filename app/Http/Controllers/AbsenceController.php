@@ -22,6 +22,7 @@ use Dompdf\Options;
 
 class AbsenceController extends Controller
 {
+
     public function index(Request $request)
     {
         $usersLaminoire = [];

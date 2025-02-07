@@ -43,23 +43,16 @@
                                                 <i class="fa fa-file"></i> Export(.xlsx)
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="btn dropdown-item float-start" data-bs-toggle="modal" data-bs-target="#editShiftModal">
+                                                <i class="fa fa-pencil"></i> shifts
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="col d-flex align-items-center gap-2">
-                                {{-- <div class="">
-                    <button type="button" class="btn btn-sm btn-warning mt-1" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="fa fa-gear"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <button class="btn btn-light w-100 h-100" id="add-user-button"
-                                data-bs-toggle="modal" data-bs-target="#addUserModal">Ajouter</button>
-                        </li>
-                    </ul>
-                </div> --}}
                                 <div>
                                     <form action="{{ route('absenceDec.index') }}" method="GET" class="d-flex">
                                         @csrf
@@ -95,6 +88,7 @@
             </div>
         </div>
     </div>
+    
     <script>
         function setAttendanceStatus(userId, status) {
             const statusInput = document.getElementById(`status_${userId}`);
