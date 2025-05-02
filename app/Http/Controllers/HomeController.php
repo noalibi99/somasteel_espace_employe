@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth; // Import the Auth facade
 use Illuminate\Support\Facades\File;
@@ -86,6 +87,40 @@ class HomeController extends Controller
             return redirect()->route('home')->with('error', 'Veuillez entrer une adresse email valide et non déjà utilisé.');
         }
     }
+
+    public function updatePassword(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => [
+                    'required',
+                    'confirmed', // matches new_password_confirmation
+                    'min:8' // optional: ensure a minimum strength
+                ],
+            ]);
+
+            // Check if the current password is correct
+            if (!Hash::check($request->current_password, $user->password)) {
+                return redirect()->route('home')->with('error', 'Le mot de passe actuel est incorrect.');
+            }
+
+            // Update with hashed new password
+            $user->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+
+            return redirect()->route('home')->with('success', 'Mot de passe mis à jour avec succès.');
+        } catch (\Throwable $e) {
+            // Optional: Log the error
+            // Log::error($e);
+
+            return redirect()->route('home')->with('error', 'Une erreur est survenue. Veuillez réessayer.');
+        }
+    }
+
     public function updatePicture(Request $request)
     {
         try {

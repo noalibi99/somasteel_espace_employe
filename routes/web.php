@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\DB;
 
 Route::middleware('auth')->group(function () {
     Route::put('/home/updateEmail', [HomeController::class, 'updateEmail'])->name('home.update');
+    Route::put('/home/update-password', [HomeController::class, 'updatePassword'])->name('home.updatePassword');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::put('/home/update-picture', [HomeController::class, 'updatePicture'])->name('profile.updatePicture');
     Route::get('/home/profiles_imgs/{filename}', [HomeController::class ,'getProfileImage'])->name('profile.image');
