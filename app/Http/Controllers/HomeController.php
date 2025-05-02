@@ -40,7 +40,7 @@ class HomeController extends Controller
     {
         $userInfo = auth()->user();
         $userResp = $userInfo->select('nom', 'prénom')
-        ->where('matricule', '=', $userInfo->responsable_hiarchique ? $userInfo->responsable_hiarchique : $userInfo->directeur ) 
+        ->where('matricule', '=', $userInfo->responsable_hiarchique ? $userInfo->responsable_hiarchique : $userInfo->directeur )
         ->first();
 
         $dcinfo = DB::select('select v_resp, v_dir, v_rh, status, raison_refus, id, nom_pdf  from dcinfo where user_id = ? order by id desc', [$userInfo->id]);
@@ -65,17 +65,17 @@ class HomeController extends Controller
     public function updateEmail()
     {
         // dd($user_id, $request->email);
-        try {        
+        try {
             $userForm = request();
-            
+
             $userForm->validate([
                 'email' => 'nullable|email',
             ], [
                 'error' => 'Veuillez entrer une adresse email valide et non utilisé.',
             ]);
-            
+
             $user = Auth::user();
-            
+
             $user->update([
                 'email'=> $userForm->email,
             ]);
@@ -146,7 +146,7 @@ class HomeController extends Controller
             'timestamp' => now()->toDateTimeString() // Log the timestamp
         ]);
         Session::flash('success', 'App download started successfully.');
-    
+
         // Return the file download
         return Storage::disk('public')->download('somasteel_android_app.apk');
     }

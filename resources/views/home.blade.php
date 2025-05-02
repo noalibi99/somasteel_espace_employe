@@ -8,8 +8,10 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900">Mon Profil</h1>
         </div>
-
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <form action="{{ route('home.update') }}"  method="POST" class="d-flex">
+            @method('PUT')
+            @csrf
+            <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-4 py-5 sm:px-6 bg-gray-50">
                 <h2 class="text-lg font-medium text-gray-900">Information Personnelle</h2>
             </div>
@@ -18,37 +20,44 @@
                     <div class="sm:col-span-3">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">Prénom</label>
                         <div class="mt-1">
-                            <input type="text" name="first_name" id="first_name" value="{{ $user->first_name ?? 'John' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md">
+                            <input type="text" name="first_name" id="first_name" value="{{ $userInfo->prénom ?? 'None' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md" readonly>
                         </div>
                     </div>
 
                     <div class="sm:col-span-3">
                         <label for="last_name" class="block text-sm font-medium text-gray-700">Nom</label>
                         <div class="mt-1">
-                            <input type="text" name="last_name" id="last_name" value="{{ $user->last_name ?? 'Doe' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md">
+                            <input type="text" name="last_name" id="last_name" value="{{ $userInfo->nom ?? 'None' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md" readonly>
                         </div>
                     </div>
-
                     <div class="sm:col-span-3">
                         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                         <div class="mt-1">
-                            <input type="email" name="email" id="email" value="{{ $user->email ?? 'john.doe@example.com' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md">
+                            <input type="email" name="email" id="email" value="{{ $userInfo->email ?? 'email@somasteel.ma' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md">
                         </div>
                     </div>
 
                     <div class="sm:col-span-3">
-                        <label for="phone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                        <label for="matricule" class="block text-sm font-medium text-gray-700">Matricule</label>
                         <div class="mt-1">
-                            <input type="text" name="phone" id="phone" value="{{ $user->phone ?? '+212 6XX-XXXXXX' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md">
+                            <input type="text" name="matricule" id="matricule" value="{{ $userInfo->matricule ?? '9999' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md" readonly>
                         </div>
                     </div>
 
-                    <div class="sm:col-span-6">
-                        <label for="address" class="block text-sm font-medium text-gray-700">Adresse</label>
+                    <div class="sm:col-span-3">
+                        <label for="service" class="block text-sm font-medium text-gray-700">Service</label>
                         <div class="mt-1">
-                            <textarea id="address" name="address" rows="3" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md">{{ $user->address ?? '123 Rue Example, Casablanca, Maroc' }}</textarea>
+                            <input type="text" name="service" id="service" value="{{ $userInfo->service ?? 'None' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md" readonly>
                         </div>
                     </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="fonction" class="block text-sm font-medium text-gray-700">Fonction</label>
+                        <div class="mt-1">
+                            <input type="text" name="fonction" id="fonction" value="{{ $userInfo->fonction ?? 'None' }}" class="shadow-sm focus:ring-somasteel-orange focus:border-somasteel-orange block w-full sm:text-sm border-gray-300 rounded-md" readonly>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
@@ -57,7 +66,7 @@
                 </button>
             </div>
         </div>
-
+        </form>
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-4 py-5 sm:px-6 bg-gray-50">
                 <h2 class="text-lg font-medium text-gray-900">Changer le mot de passe</h2>
