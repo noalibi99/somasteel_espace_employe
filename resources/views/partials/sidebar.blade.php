@@ -13,7 +13,7 @@
     <div class="flex flex-col h-full p-4">
         <div class="flex justify-center py-6 border-b border-gray-100">
             <div class="flex items-center">
-                <img src="{{ asset('images/logo.png') }}" alt="SomaSteel Logo" class="h-10 w-auto">
+                <img src="{{ asset('images/logosomasteel.png') }}" alt="SomaSteel Logo" class="h-10 w-auto">
             </div>
         </div>
 
@@ -30,7 +30,7 @@
             </a>
 
             <a
-                href="{{ route('home') }}"
+                href="{{ route('demandes.index') }}"
                 class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('demandes-conge') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

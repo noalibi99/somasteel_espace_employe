@@ -44,9 +44,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/demandes/{demande_id}/decide', [DemandesCongeController::class, 'update'])->name('demandeconge.update');
     Route::get('/demandes/download/{dc_id}', [DemandesCongeController::class, 'downloadConge'])->name('demandeConge.downloadConge');
 
-    
-    
-    
+
+
+
     Route::middleware(IsRhOrResp::class)->group(function () {
         //Absence
         Route::get('/AbsDeclaration', [AbsenceController::class, 'index'])->name('absenceDec.index');
@@ -57,9 +57,9 @@ Route::middleware('auth')->group(function () {
         Route::put('/manage-teams/{id}', [AbsenceController::class, 'updateEquipe'])->name('teams.update');
         Route::post('/create-team', [AbsenceController::class, 'createEquipe']);
         Route::delete('/delete-team/{id}', [AbsenceController::class, 'deleteEquipe']);
-        
+
         Route::get('/download-planning', [AbsenceController::class, 'downloadPlanning'])->name('download-planning');
-        
+
         Route::get('/export', [AbsenceController::class, 'export'])->name('export.shifts');
 
 
@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/Annuaire/{projet}/{depart}/{employee_nom}/{employee_id}', [AnnuaireController::class,'showEmployee'])->name('annuaire.employee');//done
         Route::post('/Annuaire/create-department', [AnnuaireController::class,'storeService'])->name('annuaire.depart.store');
         Route::delete('/Annuaire/delete-department', [AnnuaireController::class,'deleteService'])->name('annuaire.depart.delete');
-        
+
         // Route::get('/Annuaire/{depart}/{employee_nom}_{employee_id}/edit', [AnnuaireController::class, 'editEmp'])->name('annuaire.editEmployee');
         Route::put('/Annuaire/update/{projet}/{employee_id}', [AnnuaireController::class, 'updateEmp'])->name('annuaire.employee.update');
         Route::put('/Annuaire/updatePass/{employee_id}', [AnnuaireController::class, 'changePassword'])->name('annuaire.employee.changePassword');
@@ -111,3 +111,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/updateSolde', [ProfilController::class, 'updateSolde']);
+
+Route::fallback(function () {
+    return view('not-found');
+});
