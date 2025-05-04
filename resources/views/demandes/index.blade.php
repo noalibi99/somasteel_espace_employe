@@ -48,10 +48,10 @@
                                         {{ $demandeConge->prénom }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $demandeConge->toDate($demandeConge->start_date)->format('d-M-Y') }}
+                                        {{ $demande->toDate($demandeConge->start_date)->format('d-M-Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $demandeConge->toDate($demandeConge->end_date)->format('d-M-Y') }}
+                                        {{ $demande->toDate($demandeConge->end_date)->format('d-M-Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ $demandeConge->nj_decompter }}
@@ -123,7 +123,7 @@
                                         </form>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $demandeConge->toDate($demandeConge->created_at)->format('d-m-Y H:i') }}
+                                        {{ $demande->toDate($demandeConge->dcreated_at)->format('d-m-y h:m') }}
                                     </td>
                                 </tr>
                             @empty
@@ -158,6 +158,7 @@
         </div>
         <form id="leaveForm" action="{{ route('demandesconge.store') }}" method="POST" class="p-4">
             @csrf
+
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
@@ -178,34 +179,39 @@
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
-                    <input type="date" name="start_date" id="start_date" class="w-full p-2 border rounded-md" required>
+                    <input type="date" name="date_debut" id="start_date" class="w-full p-2 border rounded-md" required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
-                    <input type="date" name="end_date" id="end_date" class="w-full p-2 border rounded-md" required>
+                    <input type="date" name="date_fin" id="end_date" class="w-full p-2 border rounded-md" required>
                 </div>
             </div>
             
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Jours décomptés</label>
                 <input type="number" name="days" id="days" class="w-full p-2 bg-gray-100 border border-gray-300 rounded-md" readonly>
-                <p class="mt-1 text-xs text-gray-500">Calculé automatiquement (jours ouvrables)</p>
+                <p class="mt-1 text-xs text-gray-500">(jours ouvrables)</p>
             </div>
             
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Motif</label>
-                <textarea name="reason" rows="3" class="w-full p-2 border rounded-md" required
+                <textarea name="motif" rows="3" class="w-full p-2 border rounded-md" required
                           placeholder="Veuillez indiquer le motif de votre demande de congé..."></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Autre</label>
+                <input type="text" name="Autre" class="w-full p-2 border rounded-md"
+                          placeholder="(Optionnel)">
             </div>
             
             <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                <button type="button" onclick="closeLeaveModal()"
+                <button type="reset" onclick="closeLeaveModal()"
                         class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
                     Annuler
                 </button>
                 <button type="submit"
                         class="px-4 py-2 bg-orange-500 hover:bg-orange-600 border border-transparent rounded-md text-sm font-medium text-white"
-                        @if(auth()->user()->solde_conge <= 0 || $currentUser->hasDemandes()) disabled @endif>
+                        @if(auth()->user()->solde_conge <= 0 || !$currentUser->hasDemandes()) @disabled(true) @endif>
                     Soumettre
                 </button>
             </div>
