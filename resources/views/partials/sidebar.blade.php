@@ -31,7 +31,7 @@
 
             <a
                 href="{{ route('demandes.index') }}"
-                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('demandes-conge') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('demandes.index') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
