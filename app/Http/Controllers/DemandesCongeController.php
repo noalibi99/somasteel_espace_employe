@@ -93,13 +93,12 @@ class DemandesCongeController extends Controller
 
     public function update($demandeCg_id){
         $formDecision = request();
-        
         $demandeCgAdeside = Demandes_conge::find($demandeCg_id);
         $user = auth()->user();
         $demande = $demandeCgAdeside->demande;
         $demandeOwner = $demande->user;
 
-        // @dd($formDecision->all());
+        //@dd($formDecision->accepted);
         if($demandeCgAdeside && $formDecision->accepted){
             if ($user->isResponsable()) {
                 $demandeCgAdeside->update([
