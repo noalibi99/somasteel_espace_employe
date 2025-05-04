@@ -29,9 +29,8 @@ class DemandesCongeController extends Controller
     }
 
     public function store(){
-        // @dd($date);
+        //dd(request()->all());
         $demandeCongeForm = request();
-
         $demandeCongeForm->validate([
             'matricule' => 'required|numeric|has_demande',
             'date_debut' => 'required|date',
@@ -44,9 +43,6 @@ class DemandesCongeController extends Controller
             'date_fin.after_or_equal' => 'La date de fin doit être supérieur ou égale à la date de début!!',
             'sufficient_conge' => 'Le nombre de jours de congé demandé dépasse le solde de congé disponible.',
         ]);
-
-
-
         //@dd($demandeCongeForm->matricule, User::where('matricule','=' , $demandeCongeForm->matricule)->first()->matricule);
 
         if ($demandeCongeForm->matricule = User::where('matricule','=' , $demandeCongeForm->matricule)->first()->matricule){

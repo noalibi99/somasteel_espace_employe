@@ -142,7 +142,7 @@
     </div>
 
 <!-- New Leave Request Modal -->
-<div id="leaveModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div id="leaveModal" class="{{ $errors->any() ? '' : 'hidden' }} fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4" onclick="event.stopPropagation()">
         <div class="flex justify-between items-center border-b border-gray-200 p-4">
             <h2 class="text-xl font-semibold text-gray-800">Nouvelle demande de congé</h2>
@@ -156,36 +156,25 @@
                 {{ $currentUser->solde_conge . __(' Jours') }}
             </strong>
         </div>
+        
         <form id="leaveForm" action="{{ route('demandesconge.store') }}" method="POST" class="p-4">
             @csrf
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
-                    <input value="{{$currentUser->nom}}" @readonly(true) required type="text" class="w-full p-2 border rounded-md"
-                        name="nom" placeholder="n" />
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
-                    <input value="{{$currentUser->prénom}}" @readonly(true) required type="text"
-                        class="w-full p-2 border rounded-md" name="prénom" placeholder="n" />
-                </div>
-            </div>
-            <div class="grid grid-cols-1 mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Matricule</label>
-                <input required type="number" class="w-full p-2 border rounded-md" name="matricule" @readonly(true)
-                    placeholder="n" value="{{auth()->user()->matricule}}" />
-            </div>
+            <input type="hidden" name="matricule" value="{{ $currentUser->matricule }}">
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
-                    <input type="date" name="date_debut" id="start_date" class="w-full p-2 border rounded-md" required>
+                    <input type="date" name="date_debut" id="start_date" class="w-full p-2 border rounded-md" value="{{ old('date_debut') }}" required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
-                    <input type="date" name="date_fin" id="end_date" class="w-full p-2 border rounded-md" required>
+                    <input type="date" name="date_fin" id="end_date" class="w-full p-2 border rounded-md" value="{{ old('date_fin') }}" required>
                 </div>
             </div>
+            @if ($errors->has('date_fin'))
+                <div class="text-red-600 text-sm">
+                    {{ $errors->first('date_fin') }}
+                </div>
+            @endif
             
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Jours décomptés</label>
@@ -196,7 +185,12 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Motif</label>
                 <textarea name="motif" rows="3" class="w-full p-2 border rounded-md" required
-                          placeholder="Veuillez indiquer le motif de votre demande de congé..."></textarea>
+                          value="{{ old('motif') }}" placeholder="Veuillez indiquer le motif de votre demande de congé..."></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Autre</label>
+                <textarea name="Autre" rows="3" class="w-full p-2 border rounded-md" required
+                          value="{{ old('Autre') }}" placeholder="Veuillez indiquer le motif de votre demande de congé..."></textarea>
             </div>
             
             <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
@@ -205,8 +199,8 @@
                     Annuler
                 </button>
                 <button type="submit"
-                        class="px-4 py-2 bg-orange-500 hover:bg-orange-600 border border-transparent rounded-md text-sm font-medium text-white"
-                        @if(auth()->user()->solde_conge <= 0 || !$currentUser->hasDemandes()) @disabled(true) @endif>
+                        class="disabled:opacity-50 px-4 py-2 bg-orange-500 hover:bg-orange-600 border border-transparent rounded-md text-sm font-medium text-white"
+                        @if(auth()->user()->solde_conge <= 0 || $currentUser->hasDemandes()) @disabled(true) @endif>
                     Soumettre
                 </button>
             </div>
