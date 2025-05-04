@@ -205,6 +205,7 @@ class AnnuaireController extends Controller
                 'fonction' => 'required|string|max:255',
                 'service' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
+                'solde_conge' => 'required|numeric|max:30',
                 'responsable_hiarchique' => 'nullable|string|max:255',
                 'directeur' => 'nullable|string|max:255',
             ];
