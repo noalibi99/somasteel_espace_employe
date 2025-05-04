@@ -198,11 +198,6 @@
                 <textarea name="motif" rows="3" class="w-full p-2 border rounded-md" required
                           placeholder="Veuillez indiquer le motif de votre demande de congé..."></textarea>
             </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Autre</label>
-                <input type="text" name="Autre" class="w-full p-2 border rounded-md"
-                          placeholder="(Optionnel)">
-            </div>
             
             <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
                 <button type="reset" onclick="closeLeaveModal()"
