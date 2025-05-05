@@ -169,10 +169,12 @@ class DemandesCongeController extends Controller
                 'raison_refus' => 'required|min:10|string',
             ]);
             //selectioner la demande appartir de demandeconge id            // @dd($formDecision->all());
-            $demande->status = $formDecision->refused;
-            $demande->raison_refus = $formDecision->raison_refus;
-
-            $demande->save();
+            $demande->update([
+                'status' => $formDecision->refused,
+                'raison_refus' => $formDecision->raison_refus,
+                'updated_at' => now()
+            ]);
+            
             if ($demandeOwner->email) {
                 Mail::to($demandeOwner->email)->send(new DemandeRefusedMail($demandeOwner));
             }
