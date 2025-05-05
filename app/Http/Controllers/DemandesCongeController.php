@@ -98,7 +98,7 @@ class DemandesCongeController extends Controller
         $demande = $demandeCgAdeside->demande;
         $demandeOwner = $demande->user;
 
-        //@dd($formDecision->accepted);
+        //@dd($formDecision->refused);
         if($demandeCgAdeside && $formDecision->accepted){
             if ($user->isResponsable()) {
                 $demandeCgAdeside->update([

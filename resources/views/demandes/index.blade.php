@@ -8,6 +8,7 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900">Demandes de Congé</h1>
             <button type="button" onclick="openLeaveModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-somasteel-orange hover:bg-somasteel-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
+                <i class="fa fa-plus mr-2"></i>
                 Nouvelle demande
             </button>
         </div>
@@ -34,8 +35,8 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            @if($demandeConge->status === 'Valider') bg-green-100 text-green-800
-                                            @elseif($demandeConge->status === 'refusé') bg-red-100 text-red-800
+                                            @if($demandeConge->status === 'Validé') bg-green-100 text-green-800
+                                            @elseif($demandeConge->status === 'Refusé') bg-red-100 text-red-800
                                             @else bg-yellow-100 text-yellow-800 @endif
                                         ">
                                             {{ ucfirst($demandeConge->status ?? 'en Attend') }}
@@ -91,13 +92,13 @@
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 @else
-                                                    <button type="submit" id="accepted" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                                                    <button type="submit" id="accept-btn" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 @endif
 
                                                 {{-- Refuse button --}}
-                                                <button type="submit" id="refused"
+                                                <button type="button" id="refuse-btn"
                                                     class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600
                                                     @if(
                                                         $demande->areRefused($demandeConge->d_id) || $demande->areValidated($demandeConge->d_id) ||
@@ -304,13 +305,13 @@ function closeLeaveModal() {
 
 
 
-document.querySelectorAll('#accepted').forEach(function (button) {
+document.querySelectorAll('#accept-btn').forEach(function (button) {
     button.addEventListener('click', function () {
         approveLeave(this);
     });
 });
 
-document.querySelectorAll('#refused').forEach(function (button) {
+document.querySelectorAll('#refuse-btn').forEach(function (button) {
     button.addEventListener('click', function () {
         rejectLeave(this);
     });
@@ -350,36 +351,29 @@ function rejectLeave(button) {
         hiddenInput.name = 'refused';
         hiddenInput.value = 'Refusé';
 
-        let raisonRefu = document.getElementById('raison-refus').value;
+        let raisonRefus = document.getElementById('raison-refus').value;
         let hiddenTextInput = document.createElement('input');
         hiddenTextInput.type = 'hidden';
         hiddenTextInput.name = 'raison_refus';
-        hiddenTextInput.value = raisonRefu;
+        hiddenTextInput.value = raisonRefus;
 
         // Append the hidden input fields to the form
         decisionForm.appendChild(hiddenInput);
         decisionForm.appendChild(hiddenTextInput);
 
         decisionForm.submit();
-        // Add fading out effect when submitting the form
-        refusCard.classList.remove('fade-in');
-        refusCard.classList.add('fade-out');
+
         // Hide the 'refus-card' after fading out
         setTimeout(() => {
             refusCard.classList.add('hidden');
-            refusCard.classList.remove('fade-out');
         }, 300); // Match the duration of fadeOut animation
     });
 
     // Add event listener to the 'annuler-refus' button
     document.getElementById('annuler-refus').addEventListener('click', function () {
-        // Add fading out effect when canceling
-        refusCard.classList.remove('fade-in');
-        refusCard.classList.add('fade-out');
         // Hide the 'refus-card' after fading out
         setTimeout(() => {
             refusCard.classList.add('hidden');
-            refusCard.classList.remove('fade-out');
         }, 300); // Match the duration of fadeOut animation
     });
 }
