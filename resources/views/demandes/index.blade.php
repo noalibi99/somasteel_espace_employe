@@ -55,14 +55,22 @@
                                         {{ $demandeConge->id }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        <span class="px-2 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full
                                             @if($demandeConge->status === 'Validé') bg-green-100 text-green-800
                                             @elseif($demandeConge->status === 'Refusé') bg-red-100 text-red-800
                                             @else bg-yellow-100 text-yellow-800 @endif
                                         ">
+                                            @if($demandeConge->status === 'Validé')
+                                                <i class="fas fa-check"></i>
+                                            @elseif($demandeConge->status === 'Refusé')
+                                                <i class="fas fa-times"></i>
+                                            @else
+                                                <i class="fas fa-hourglass-half"></i>
+                                            @endif
                                             {{ ucfirst($demandeConge->status ?? 'en Attend') }}
                                         </span>
                                     </td>
+
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ $demandeConge->nom }}
                                     </td>

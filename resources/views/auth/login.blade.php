@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
-@push('vite')
-    @vite('resources/js/login.js')
-@endpush
+@section('title', 'Connexion')
 
 @section('content')
 <div class="min-h-screen flex items-center fixed justify-center pb-12 px-4 sm:px-6 lg:px-8">

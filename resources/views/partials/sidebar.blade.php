@@ -18,6 +18,16 @@
         </div>
 
         <nav class="flex flex-col gap-1 mt-8">
+        @guest
+            <a
+                href="{{ route('login') }}"
+                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange transition-colors"
+            >
+                <i class="fas fa-sign-in-alt"></i>
+                Se connecter
+            </a>
+        @endguest
+        @auth
             <a
                 href="{{ route('home') }}"
                 class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('home') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
@@ -41,7 +51,9 @@
                 </svg>
                 Demandes Congé
             </a>
+        @endauth
 
+        @if(Auth::user() && (Auth::user()->isRH() || Auth::user()->isResponsable()))
             <a
                 href="{{ route('home') }}"
                 class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('declaration-absences') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
@@ -55,7 +67,9 @@
                 </svg>
                 Déclaration des absences
             </a>
+        @endif
 
+        @if(Auth::user() && Auth::user()->isRH())
             <a
                 href="{{ route('home') }}"
                 class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('employees') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
@@ -68,6 +82,7 @@
                 </svg>
                 Annuaire des Employés
             </a>
+        @endif
         </nav>
 
         @if(auth()->user())
