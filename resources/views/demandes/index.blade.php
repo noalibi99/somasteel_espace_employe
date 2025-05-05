@@ -8,9 +8,19 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900">Demandes de Congé</h1>
             <button type="button" onclick="openLeaveModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-somasteel-orange hover:bg-somasteel-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
+                <i class="fa fa-plus mr-2"></i>
                 Nouvelle demande
             </button>
         </div>
+        @if (session('success'))
+            <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+                <strong>Succès!</strong> {{ session('success') }}
+            </div>
+        @elseif (session('error'))
+            <div class="bg-red-100 text-red-800 p-4 rounded-md mb-4">
+                <strong>Erreur!</strong> {{ session('error') }}
+            </div>
+        @endif
 
         <div class="flex flex-col">
             <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -34,8 +44,8 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            @if($demandeConge->status === 'Valider') bg-green-100 text-green-800
-                                            @elseif($demandeConge->status === 'refusé') bg-red-100 text-red-800
+                                            @if($demandeConge->status === 'Validé') bg-green-100 text-green-800
+                                            @elseif($demandeConge->status === 'Refusé') bg-red-100 text-red-800
                                             @else bg-yellow-100 text-yellow-800 @endif
                                         ">
                                             {{ ucfirst($demandeConge->status ?? 'en Attend') }}
@@ -60,7 +70,7 @@
                                         {{ $demandeConge->motif ?: '—' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <form action="{{ route('demandeconge.update', $demandeConge->id) }}" method="POST" class="flex gap-1">
+                                        <form action="{{ route('demandeconge.update', $demandeConge->id) }}" method="POST" class="flex gap-1 decision-form">
                                             @csrf
                                             @method('PUT')
 
@@ -91,13 +101,13 @@
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 @else
-                                                    <button type="submit" name="decision" value="accept" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                                                    <button type="submit" id="accept-btn" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 @endif
 
                                                 {{-- Refuse button --}}
-                                                <button type="submit" name="decision" value="refuse"
+                                                <button type="button" id="refuse-btn"
                                                     class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600
                                                     @if(
                                                         $demande->areRefused($demandeConge->d_id) || $demande->areValidated($demandeConge->d_id) ||
@@ -160,6 +170,8 @@
         <form id="leaveForm" action="{{ route('demandesconge.store') }}" method="POST" class="p-4">
             @csrf
             <input type="hidden" name="matricule" value="{{ $currentUser->matricule }}">
+            <input type="hidden" name="nom" value="{{ $currentUser->nom }}">
+            <input type="hidden" name="prénom" value="{{ $currentUser->prénom }}">
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
@@ -207,18 +219,41 @@
         </form>
     </div>
 </div>
+
+<!-- Rejection Card -->
+<div id="refus-card" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Raison du refus</h2>
+            <button id="annuler-refus" class="text-gray-400 hover:text-gray-500">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Raison du refus</label>
+                <textarea id="raison-refus" rows="4" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="Veuillez indiquer la raison du refus..."></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button id="annuler-refus" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700">
+                    Annuler
+                </button>
+                <button id="confirme-refus" class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-md text-sm font-medium text-white">
+                    Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Lucide icons
-    lucide.createIcons();
-
     // Add event listeners to standard date inputs
     document.getElementById('start_date').addEventListener('change', calculateDays);
     document.getElementById('end_date').addEventListener('change', calculateDays);
-
     // Search functionality
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', function(e) {
@@ -233,38 +268,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function calculateBusinessDays(start, end) {
-        let startDate = new Date(start);
-        let endDate = new Date(end);
-        let count = 0;
+    let startDate = new Date(start);
+    let endDate = new Date(end);
+    let count = 0;
 
-        // Loop through each date
-        while (startDate <= endDate) {
-            const day = startDate.getDay();
-            // 0 = Sunday, 6 = Saturday
-            if (day !== 0 && day !== 6) {
-                count++;
-            }
-            // Move to next day
-            startDate.setDate(startDate.getDate() + 1);
+    // Loop through each date
+    while (startDate <= endDate) {
+        const day = startDate.getDay();
+        // 0 = Sunday, 6 = Saturday
+        if (day !== 0 && day !== 6) {
+            count++;
         }
-
-        return count;
+        // Move to next day
+        startDate.setDate(startDate.getDate() + 1);
     }
 
-    function calculateDays() {
-        const start = document.getElementById('start_date').value;
-        const end = document.getElementById('end_date').value;
+    return count;
+}
 
-        if (start && end) {
-            const businessDays = calculateBusinessDays(start, end);
-            document.getElementById('days').value = businessDays > 0 ? businessDays : 0;
-        }
+function calculateDays() {
+    const start = document.getElementById('start_date').value;
+    const end = document.getElementById('end_date').value;
+
+    if (start && end) {
+        const businessDays = calculateBusinessDays(start, end);
+        document.getElementById('days').value = businessDays > 0 ? businessDays : 0;
     }
+}
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('start_date')?.addEventListener('change', calculateDays);
-        document.getElementById('end_date')?.addEventListener('change', calculateDays);
-    });
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('start_date')?.addEventListener('change', calculateDays);
+    document.getElementById('end_date')?.addEventListener('change', calculateDays);
+});
 
 
 function openLeaveModal() {
@@ -275,26 +310,75 @@ function closeLeaveModal() {
     document.getElementById('leaveModal').classList.add('hidden');
 }
 
-function approveLeave(id) {
-    if (confirm('Êtes-vous sûr de vouloir approuver cette demande ?')) {
-        fetch(`/leaves/${id}/approve`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        }).then(() => window.location.reload());
-    }
+
+
+document.querySelectorAll('#accept-btn').forEach(function (button) {
+    button.addEventListener('click', function () {
+        approveLeave(this);
+    });
+});
+
+document.querySelectorAll('#refuse-btn').forEach(function (button) {
+    button.addEventListener('click', function () {
+        rejectLeave(this);
+    });
+});
+
+function approveLeave(button) {
+    let decisionForm = button.closest('.decision-form'); // Find the closest form element
+
+    // Create a hidden input field
+    let hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'accepted';
+    hiddenInput.value = '1';
+
+    // Append the hidden input field to the form
+    decisionForm.appendChild(hiddenInput);
+
+    // Submit the form
+    decisionForm.submit();
 }
 
-function rejectLeave(id) {
-    if (confirm('Êtes-vous sûr de vouloir rejeter cette demande ?')) {
-        fetch(`/leaves/${id}/reject`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        }).then(() => window.location.reload());
-    }
+function rejectLeave(button) {
+    let refusCard = document.getElementById('refus-card');
+
+    // Remove the 'hidden' class and add fading in effect
+    refusCard.classList.remove('hidden');
+
+    // Create hidden input fields for form submission
+    
+
+    // Add event listener to the 'confirme-refus' button
+    document.getElementById('confirme-refus').addEventListener('click', function () {
+        let decisionForm = button.closest('.decision-form'); // Find the closest form element
+        let hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'refused';
+        hiddenInput.value = 'Refusé';
+
+        let raisonRefus = document.getElementById('raison-refus').value;
+        let hiddenTextInput = document.createElement('input');
+        hiddenTextInput.type = 'hidden';
+        hiddenTextInput.name = 'raison_refus';
+        hiddenTextInput.value = raisonRefus;
+
+        // Append the hidden input fields to the form
+        decisionForm.appendChild(hiddenInput);
+        decisionForm.appendChild(hiddenTextInput);
+
+        decisionForm.submit();
+
+        // Hide the 'refus-card' after fading out
+        setTimeout(() => {
+            refusCard.classList.add('hidden');
+        }, 300); // Match the duration of fadeOut animation
+    });
+
+    // Add event listener to the 'annuler-refus' button
+    document.getElementById('annuler-refus').addEventListener('click', function () {
+            refusCard.classList.add('hidden');
+    });
 }
 
 function downloadLeave(id) {

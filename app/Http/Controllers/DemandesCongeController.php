@@ -32,6 +32,8 @@ class DemandesCongeController extends Controller
         //dd(request()->all());
         $demandeCongeForm = request();
         $demandeCongeForm->validate([
+            'nom' => 'required|max:255',
+            'prénom' => 'required|max:255',
             'matricule' => 'required|numeric|has_demande',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut|sufficient_conge',
@@ -93,13 +95,12 @@ class DemandesCongeController extends Controller
 
     public function update($demandeCg_id){
         $formDecision = request();
-        
         $demandeCgAdeside = Demandes_conge::find($demandeCg_id);
         $user = auth()->user();
         $demande = $demandeCgAdeside->demande;
         $demandeOwner = $demande->user;
 
-        // @dd($formDecision->all());
+        //@dd($formDecision->refused);
         if($demandeCgAdeside && $formDecision->accepted){
             if ($user->isResponsable()) {
                 $demandeCgAdeside->update([
@@ -170,10 +171,12 @@ class DemandesCongeController extends Controller
                 'raison_refus' => 'required|min:10|string',
             ]);
             //selectioner la demande appartir de demandeconge id            // @dd($formDecision->all());
-            $demande->status = $formDecision->refused;
-            $demande->raison_refus = $formDecision->raison_refus;
-
-            $demande->save();
+            $demande->update([
+                'status' => $formDecision->refused,
+                'raison_refus' => $formDecision->raison_refus,
+                'updated_at' => now()
+            ]);
+            
             if ($demandeOwner->email) {
                 Mail::to($demandeOwner->email)->send(new DemandeRefusedMail($demandeOwner));
             }
