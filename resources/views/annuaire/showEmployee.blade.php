@@ -1,236 +1,179 @@
 @extends('layouts.app')
 
-@push('vite')
-@vite(['resources/js/employee.js'])
-@endpush
 @section('content')
-<style>
+<div class="flex flex-col items-center py-8">
+    <!-- Profile Card -->
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow border border-somasteel-orange flex flex-col items-center py-8 px-6 mb-6">
+        @if ($employee->profile_picture)
+            <img class="w-28 h-28 rounded-full object-cover border-4 border-somasteel-orange mb-4" src='{{ route('profile.image', basename($employee->profile_picture)) }}'>
+        @else
+            <span class="w-28 h-28 flex items-center justify-center rounded-full bg-gray-100 border-4 border-somasteel-orange mb-4">
+                <i class="fa fa-user fa-3x text-gray-400"></i>
+            </span>
+        @endif
+        <h2 class="text-2xl font-bold text-somasteel-orange mb-1">{{ $employee->nom }} {{ $employee->prénom }}</h2>
+        <div class="text-gray-600 mb-2">{{ $employee->fonction }}</div>
+        <div class="text-gray-500 text-sm">{{ $employee->email }}</div>
+    </div>
 
-</style>
-<div class="container mt-4 p-sm-2 ">
-    <div class="row d-flex justify-content-center">
-        <div class="card col-lg-6 px-0">
-            <div class="card-header">
-                <h2>
-                    <a href="{{ route('annuaire.depart', [$employee->projet, $employee->service]) }}" class="btn btn-sm btn-secondary">
-                        <i class="fa fa-angle-left" aria-hidden="true"></i>
-                    </a>
-                    <u>{{ $employee->nom }} {{ $employee->prénom }}</u>
-                </h2>
-            </div>
-            <form action="{{ route('annuaire.employee.update', [$employee->projet, $employee->id]) }}" method="POST">
-                @csrf
-                @method('PUT')
-            <div class="card-body pe-4">    
-                <div class="row w-100 d-flex justify-content-center mb-3">
-                    @if ($employee->profile_picture)
-                            <img 
-                            class="custom-file-upload mx-0 px-0"
-                            src='{{ route('profile.image', basename($employee->profile_picture)) }}'
-                            >
-                        @else
-                            <span class="custom-file-upload">
-                                <i class="fa fa-user fa-5x" aria-hidden="true"></i>
-                            </span>
+    <!-- Details Card -->
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow border border-gray-200 px-8 py-6">
+        <form id="employeeForm" action="{{ route('annuaire.employee.update', [$employee->projet, $employee->id]) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Matricule</label>
+                    <span class="field-display">{{ $employee->matricule }}</span>
+                    <input type="text" name="matricule" value="{{ $employee->matricule }}" class="field-edit input input-bordered w-full hidden">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Service</label>
+                    <span class="field-display">{{ $employee->service }}</span>
+                    <select name="service" class="field-edit input input-bordered w-full hidden">
+                        @foreach ($services as $service)
+                            <option @if ($employee->service == $service) selected @endif value="{{$service}}">{{ $service }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <span class="field-display">
+                        @if ($employee->type =='rh') Ressources Humaines
+                        @elseif($employee->type =='administrateur') Admin
+                        @elseif($employee->type =='directeur') Directeur
+                        @elseif ($employee->type =='responsable') Responsable
+                        @else Normal
                         @endif
+                    </span>
+                    <select name="type" class="field-edit input input-bordered w-full hidden">
+                        <option value="ouvrier" @if ($employee->type =='ouvrier') selected @endif>Normal</option>
+                        <option value="responsable" @if ($employee->type =='responsable') selected @endif>Responsable</option>
+                        <option value="directeur" @if ($employee->type =='directeur') selected @endif>Directeur</option>
+                        <option value="rh" @if ($employee->type =='rh') selected @endif>Ressources Humaines</option>
+                        <option value="administrateur" @if ($employee->type =='administrateur') selected @endif>Admin</option>
+                    </select>
                 </div>
-                <div class="field-container mb-3 ps-2" id="nom-prénom-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Nom Prénom:</strong></div>
-                        <div class="col-8">
-                            <span class="field-display">{{ $employee->nom }} {{ $employee->prénom }}</span>
-                            <div class="row d-flex align-content-center gap-1 py-0 my-0 ">
-                                <input type="text" name="nom" value="{{ $employee->nom }}"
-                                    class="field-edit form-control col d-none ">
-                                <input type="text" name="prénom" value="{{ $employee->prénom }}"
-                                    class="field-edit form-control col d-none ">
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Solde Congé</label>
+                    <span class="field-display">{{ $employee->solde_conge }}</span>
+                    <input type="number" name="solde_conge" value="{{ $employee->solde_conge }}" class="field-edit input input-bordered w-full hidden">
                 </div>
-                <div class="field-container mb-3 ps-2" id="email-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Email:</strong></div>
-                        <div class="col-8 p-0 my-0">
-                            <span class="field-display">{{ $employee->email }}</span>
-                            <input type="email" name="email" value="{{ $employee->email }}"
-                                class="field-edit form-control d-none">
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Responsable Hiérarchique</label>
+                    <span class="field-display">{{ $employee->responsable_hiarchique }}</span>
+                    <input type="text" name="responsable_hiarchique" value="{{ $employee->responsable_hiarchique }}" class="field-edit input input-bordered w-full hidden">
                 </div>
-                <div class="field-container mb-3 ps-2" id="matricule-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Matricule:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0">
-                            <span class="field-display">{{ $employee->matricule }}</span>
-                            <input type="text" name="matricule" value="{{ $employee->matricule }}"
-                                class="field-edit form-control d-none">
-                        </div>
-                    </div>
-                </div>
-                <div class="field-container mb-3 ps-2" id="fonction-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Fonction:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0">
-                            <span class="field-display">{{ $employee->fonction }}</span>
-                            <input type="text" name="fonction" value="{{ $employee->fonction }}"
-                                class="field-edit form-control d-none">
-                        </div>
-                    </div>
-                </div>
-                <div class="field-container mb-3 ps-2" id="service-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Service:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0">
-                            <span class="field-display">{{ $employee->service }}</span>
-                            <select class="form-select form-select-md field-edit d-none" id="service" name="service" value="{{ old('type') }}" required>
-                                @foreach ($services as $service)
-                                    <option @if ($employee->service == $service) @selected(true) @endif value="{{$service}}" >{{ $service }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="field-container mb-3 ps-2" id="type-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Type:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0">
-                            {{-- type cases --}}
-                            <span class="field-display">
-                                @if ($employee->type =='rh') {{ 'Ressources Humaines' }}
-                                @elseif($employee->type =='administrateur') {{ 'Admin' }}
-                                @elseif($employee->type =='directeur') {{ 'Directeur' }}
-                                @elseif ($employee->type =='responsable') {{ 'Responsable' }}
-                                @else {{ 'Normal' }}
-                                @endif
-                            </span>
-                            <select class="form-select form-select-md field-edit d-none" id="type" name="type" value="{{ old('type') }}" required>
-                                <option value="ouvrier" @if ($employee->type =='ouvrier') @selected(true) @endif >Normal</option>
-                                <option value="responsable" @if ($employee->type =='responsable') @selected(true) @endif>Responsable</option>
-                                <option value="directeur" @if ($employee->type =='directeur') @selected(true) @endif>Directeur</option>
-                                <option value="rh" @if ($employee->type =='rh') @selected(true) @endif>Ressources Humaines</option>
-                                <option value="administrateur" @if ($employee->type =='administrateur') @selected(true) @endif>Admin</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="field-container mb-3 ps-2" id="solde-conge-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Solde Congé:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0">
-                            <span class="field-display">{{ $employee->solde_conge }}</span>
-                            <input type="number" name="solde_conge" value="{{ $employee->solde_conge }}"
-                                class="field-edit form-control d-none">
-                        </div>
-                    </div>
-                </div>
-                <div class="field-container mb-3 ps-2" id="responsable-hierarchique-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Responsable Hiérarchique:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0 d-flex gap-1">
-                            <span class="field-display">{{ $employee->responsable_hiarchique }}</span>
-                            <input type="text" id="responsable_hiarchique" class="field-edit form-control d-none" value="{{ $employee->responsable_hiarchique ?? '' }}">
-                            <input type="text" name="responsable_hiarchique" id="responsable_hiarchique_matricule"
-                                value="{{ $employee->resp_matricule ?? null }}" @readonly(true) class="field-edit w-25 text-center bg-secondary-subtle form-control d-none">
-                        </div>
-                    </div>
-                </div>
-                <div class="field-container mb-3 ps-2" id="directeur-container">
-                    <div class="row">
-                        <div class="col-4 p-0"><strong>Directeur:</strong></div>
-                        <div class="col-8 p-0 my-0 py-0 d-flex gap-1">
-                            <span class="field-display">{{ $employee->directeur }}</span>
-                            <input type="text" class="field-edit form-control d-none" id="directeur" value="{{ $employee->directeur ?? '' }}">
-                            <input type="text" name="directeur" id="directeur_matricule" value="{{ $employee->dir_matricule ?? null }}" @readonly(true)
-                                class="field-edit w-25 text-center bg-secondary-subtle form-control d-none">
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Directeur</label>
+                    <span class="field-display">{{ $employee->directeur }}</span>
+                    <input type="text" name="directeur" value="{{ $employee->directeur }}" class="field-edit input input-bordered w-full hidden">
                 </div>
             </div>
-            <script>
-                var responsables = {!! json_encode($responsables) !!};
-                var directeurs = {!! json_encode($directeurs) !!};
-            </script>
-            <div class="card-footer text-start align-items-center">
-                <div class="btn-group">
-                    <button type="submit" id="save-button" class="btn btn-sm btn-warning d-none"><i class="fa fa-check"
-                            aria-hidden="true"></i> Enregistrer</button>
-                    <button type="button" id="cancel-button" class="btn btn-sm btn-secondary d-none"><i
-                            class="fa fa-times" aria-hidden="true"></i> Annuler</button>
-                    <button type="button" id="edit-button" class="btn btn-sm btn-success rounded-start-1 "><i
-                            class="fa fa-pencil" aria-hidden="true"></i> Modifier</button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-employee-id="{{ $employee->id }}" data-employee-name="{{ $employee->nom }} {{ $employee->prénom }}">
-                        <i class="fa fa-trash" aria-hidden="true"></i> Supprimer
-                    </button>
-                </div>
-                <button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                    <i class="fa fa-lock" aria-hidden="true"></i> Changer Mot de Passe
+            <div class="flex flex-wrap gap-2 mt-8">
+                <button type="submit" id="save-button" class="field-edit px-4 py-2 rounded-lg bg-somasteel-orange text-white hidden">
+                    <i class="fa fa-check mr-1"></i> Enregistrer
+                </button>
+                <button type="button" id="cancel-button" class="field-edit px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 hidden">
+                    <i class="fa fa-times mr-1"></i> Annuler
+                </button>
+                <button type="button" id="edit-button" class="field-display px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600">
+                    <i class="fa fa-pencil mr-1"></i> Modifier
+                </button>
+                <button type="button" class="field-display px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                        onclick="openDeleteEmployeeModal('{{ $employee->id }}', '{{ $employee->nom }} {{ $employee->prénom }}')">
+                    <i class="fa fa-trash mr-1"></i> Supprimer
+                </button>
+                <button type="button" class="field-display px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 ml-auto"
+                        onclick="openChangePasswordModal()">
+                    <i class="fa fa-lock mr-1"></i> Changer Mot de Passe
                 </button>
             </div>
-            </form>
-        </div>
-        {{-- DELETE CONFIRMATION MODEL --}}
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning">
-                        <h5 class="modal-title" id="deleteModalLabel">Confirmation de Suppression</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Êtes-vous sûr de vouloir supprimer l'employé <b id="employeeNameToDelete"></b>?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <form id="deleteForm" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Supprimer</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- CHANGE PASS --}}
-        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning">
-                        <h5 class="modal-title" id="changePasswordModalLabel">Changer le mot de passe</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="changePasswordForm" action="{{ route('annuaire.employee.changePassword', $employee->id) }}" method="POST" class="needs-validation" novalidate>
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div class="mb-3 input-group">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="newPassword" name="new_password" value="{{ old('new_password') }}" placeholder="Nouveau mot de passe" required minlength="8">
-                                    <label for="newPassword">Nouveau mot de passe</label>
-                                    <div class="invalid-feedback">Le mot de passe est requis et doit contenir au moins 8 caractères.</div>
-                                </div>
-                                <button class="input-group-text eye-icon" type="button" id="togglePasswordVisibility">
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                            <div class="mb-3 form-floating">
-                                <input type="password" class="form-control" id="confirmPassword" name="confirm_new_password" value="{{ old('confirm_new_password') }}" placeholder="Confirmation du mot de passe" required minlength="8">
-                                <label for="confirmPassword">Confirmation du mot de passe</label>
-                                <div class="invalid-feedback">La confirmation du mot de passe est incorrecte.</div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-success">Changer le mot de passe</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-
+        </form>
     </div>
 </div>
 
+<!-- Change Password Modal -->
+<div id="changePasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10 hidden">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-8 border-t-8 border-somasteel-orange">
+        <h3 class="text-xl font-bold mb-4 text-somasteel-orange">Changer le mot de passe</h3>
+        <form id="changePasswordForm" action="{{ route('annuaire.employee.changePassword', $employee->id) }}" method="POST" novalidate>
+            @csrf
+            @method('PUT')
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
+                <div class="relative">
+                    <input type="password" id="newPassword" name="new_password" class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-somasteel-orange" required minlength="8">
+                    <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility('newPassword', 'confirmPassword', this)">
+                        <i class="fa fa-eye"></i>
+                    </span>
+                </div>
+                <div class="text-red-600 text-xs mt-1 hidden" id="newPasswordError">Le mot de passe est requis et doit contenir au moins 8 caractères.</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Confirmation du mot de passe</label>
+                <input type="password" id="confirmPassword" name="confirm_new_password" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-somasteel-orange" required minlength="8">
+                <div class="text-red-600 text-xs mt-1 hidden" id="confirmPasswordError">La confirmation du mot de passe est incorrecte.</div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="closeChangePasswordModal()">Annuler</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-somasteel-orange text-white">Changer le mot de passe</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Edit mode toggle
+    document.getElementById('edit-button').addEventListener('click', function () {
+        toggleEditMode(true);
+    });
+    document.getElementById('cancel-button').addEventListener('click', function () {
+        toggleEditMode(false);
+    });
+
+    // If URL contains ?edit, enter edit mode
+    if (window.location.search.includes('edit')) {
+        toggleEditMode(true);
+    }
+
+    function toggleEditMode(editMode) {
+        document.querySelectorAll('.field-display').forEach(el => el.classList.toggle('hidden', editMode));
+        document.querySelectorAll('.field-edit').forEach(el => el.classList.toggle('hidden', !editMode));
+        document.getElementById('edit-button').classList.toggle('hidden', editMode);
+        document.getElementById('save-button').classList.toggle('hidden', !editMode);
+        document.getElementById('cancel-button').classList.toggle('hidden', !editMode);
+    }
+
+    // Delete modal
+    window.openDeleteEmployeeModal = function(id, name) {
+        document.getElementById('employeeNameToDelete').textContent = name;
+        document.getElementById('deleteEmployeeForm').action = '/Annuaire/delete/' + id;
+        document.getElementById('deleteEmployeeModal').classList.remove('hidden');
+    }
+    window.closeDeleteEmployeeModal = function() {
+        document.getElementById('deleteEmployeeModal').classList.add('hidden');
+    }
+
+    // Change password modal
+    window.openChangePasswordModal = function() {
+        document.getElementById('changePasswordModal').classList.remove('hidden');
+    }
+    window.closeChangePasswordModal = function() {
+        document.getElementById('changePasswordModal').classList.add('hidden');
+    }
+
+    // Password visibility toggle
+    window.togglePasswordVisibility = function(passwordId, confirmId, el) {
+        const passwordField = document.getElementById(passwordId);
+        const confirmField = document.getElementById(confirmId);
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        confirmField.type = type;
+        el.querySelector('i').classList.toggle('fa-eye');
+        el.querySelector('i').classList.toggle('fa-eye-slash');
+    }
+});
+</script>
 @endsection

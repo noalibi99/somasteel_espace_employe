@@ -70,7 +70,7 @@
             <h3 class="text-xl font-bold mb-4 text-somasteel-orange">Ajouter un département</h3>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Nom du département</label>
-                <input type="text" id="deptNameStep1" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" required>
+                <input type="text" id="deptNameStep1" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" required>
                 <div class="text-red-600 text-xs mt-1 hidden" id="deptNameStep1Error">Le nom du département est requis.</div>
             </div>
             <div class="flex justify-end space-x-2 mt-6">
@@ -94,29 +94,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nom</label>
-                        <input type="text" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="nom" name="nom" placeholder="Nom" required>
+                        <input type="text" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="nom" name="nom" placeholder="Nom" required>
                         <div class="text-red-600 text-xs mt-1 hidden" id="nomError">Nom est requis.</div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Prénom</label>
-                        <input type="text" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="prénom" name="prénom" placeholder="Prénom" required>
+                        <input type="text" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="prénom" name="prénom" placeholder="Prénom" required>
                         <div class="text-red-600 text-xs mt-1 hidden" id="prenomError">Prénom est requis.</div>
                     </div>
                 </div>
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="email" name="email" placeholder="Email (example@exmp.com)" required>
+                    <input type="email" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="email" name="email" placeholder="Email (example@exmp.com)" required>
                     <div class="text-red-600 text-xs mt-1 hidden" id="emailError">Entrez un email valide.</div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Matricule</label>
-                        <input type="text" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="matricule" name="matricule" placeholder="Matricule" required>
+                        <input type="text" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="matricule" name="matricule" placeholder="Matricule" required>
                         <div class="text-red-600 text-xs mt-1 hidden" id="matriculeError">Matricule est requis.</div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Type</label>
-                        <select class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="type" name="type" required>
+                        <select class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="type" name="type" required>
                             <option value="ouvrier">Normal</option>
                             <option value="responsable" selected>Responsable</option>
                             <option value="directeur">Directeur</option>
@@ -129,38 +129,38 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Fonction</label>
-                        <input type="text" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="fonction" name="fonction" placeholder="Fonction">
+                        <input type="text" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="fonction" name="fonction" placeholder="Fonction">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Solde Congé actuelle</label>
-                        <input type="number" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="solde_conge" name="solde_conge" placeholder="Solde Congé">
+                        <input type="number" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="solde_conge" name="solde_conge" placeholder="Solde Congé">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Responsable Hiérarchique</label>
-                        <input type="text" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="responsable_hiarchique" name="responsable_hiarchique" placeholder="Responsable Hiérarchique">
+                        <input type="text" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="responsable_hiarchique" name="responsable_hiarchique" placeholder="Responsable Hiérarchique">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Matricule</label>
-                        <input type="text" readonly class="mt-1 block w-full border border-somasteel-orange bg-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="responsable_hiarchique_matricule" name="responsable_hiarchique_matricule" placeholder="Matricule">
+                        <input type="text" readonly class="mt-1 block w-full border  bg-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="responsable_hiarchique_matricule" name="responsable_hiarchique_matricule" placeholder="Matricule">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Directeur</label>
-                        <input type="text" class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="directeur" name="directeur" placeholder="Directeur">
+                        <input type="text" class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="directeur" name="directeur" placeholder="Directeur">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Matricule</label>
-                        <input type="text" readonly class="mt-1 block w-full border border-somasteel-orange bg-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="directeur_matricule" name="directeur_matricule" placeholder="Matricule">
+                        <input type="text" readonly class="mt-1 block w-full border  bg-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange" id="directeur_matricule" name="directeur_matricule" placeholder="Matricule">
                     </div>
                 </div>
                 <div class="mt-4 flex items-center">
                     <div class="relative w-full">
                         <input 
                             type="password" 
-                            class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange"
+                            class="mt-1 block w-full border  rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange"
                             id="password" name="password" placeholder="Mot de passe" required>
                         <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility('password', this)">
                             <i class="fa-solid fa-eye"></i>
@@ -171,7 +171,7 @@
                 <div class="mt-4">
                     <input 
                         type="password" 
-                        class="mt-1 block w-full border border-somasteel-orange rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange"
+                        class="mt-1 block w-full border  rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange"
                         id="password_confirmation" name="password_confirmation" placeholder="Confirmation du mot de passe" required>
                     <div class="text-red-600 text-xs mt-1 hidden" id="passwordConfirmError">La confirmation du mot de passe est incorrect.</div>
                 </div>
