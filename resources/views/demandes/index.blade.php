@@ -12,6 +12,15 @@
                 Nouvelle demande
             </button>
         </div>
+        @if (session('success'))
+            <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+                <strong>Succès!</strong> {{ session('success') }}
+            </div>
+        @elseif (session('error'))
+            <div class="bg-red-100 text-red-800 p-4 rounded-md mb-4">
+                <strong>Erreur!</strong> {{ session('error') }}
+            </div>
+        @endif
 
         <div class="flex flex-col">
             <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -161,6 +170,8 @@
         <form id="leaveForm" action="{{ route('demandesconge.store') }}" method="POST" class="p-4">
             @csrf
             <input type="hidden" name="matricule" value="{{ $currentUser->matricule }}">
+            <input type="hidden" name="nom" value="{{ $currentUser->nom }}">
+            <input type="hidden" name="prénom" value="{{ $currentUser->prénom }}">
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
@@ -240,13 +251,9 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Lucide icons
-    lucide.createIcons();
-
     // Add event listeners to standard date inputs
     document.getElementById('start_date').addEventListener('change', calculateDays);
     document.getElementById('end_date').addEventListener('change', calculateDays);
-
     // Search functionality
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', function(e) {
@@ -338,7 +345,6 @@ function rejectLeave(button) {
 
     // Remove the 'hidden' class and add fading in effect
     refusCard.classList.remove('hidden');
-    refusCard.classList.add('fade-in');
 
     // Create hidden input fields for form submission
     
@@ -371,10 +377,7 @@ function rejectLeave(button) {
 
     // Add event listener to the 'annuler-refus' button
     document.getElementById('annuler-refus').addEventListener('click', function () {
-        // Hide the 'refus-card' after fading out
-        setTimeout(() => {
             refusCard.classList.add('hidden');
-        }, 300); // Match the duration of fadeOut animation
     });
 }
 

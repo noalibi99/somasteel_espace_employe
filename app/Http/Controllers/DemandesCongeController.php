@@ -32,6 +32,8 @@ class DemandesCongeController extends Controller
         //dd(request()->all());
         $demandeCongeForm = request();
         $demandeCongeForm->validate([
+            'nom' => 'required|max:255',
+            'prénom' => 'required|max:255',
             'matricule' => 'required|numeric|has_demande',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut|sufficient_conge',
