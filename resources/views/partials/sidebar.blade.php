@@ -70,6 +70,7 @@
             </a>
         </nav>
 
+        @if(auth()->user())
         <div class="mt-auto pt-6 border-t border-gray-100">
             <a
                 href="{{ route('home') }}"
@@ -88,6 +89,7 @@
                 @csrf
             </form>
         </div>
+        @endif
     </div>
 </div>
 
