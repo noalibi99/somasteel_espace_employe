@@ -22,8 +22,20 @@
             </div>
         @endif
 
+        <div class="relative w-64">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                <i class="fas fa-search"></i>
+            </span>
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Rechercher..." 
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-somasteel-orange/90 focus:border-somasteel-orange transition duration-150 ease-in-out"
+            />
+        </div>
+
         <div class="flex flex-col">
-            <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
