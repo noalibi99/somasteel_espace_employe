@@ -22,6 +22,26 @@
             @csrf
             @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="hidden hidden-input">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                    <span class="field-display">{{ $employee->nom }}</span>
+                    <input type="text" name="nom" value="{{ $employee->nom }}" class="field-edit input input-bordered w-full hidden">
+                </div>
+                <div class="hidden hidden-input">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                    <span class="field-display">{{ $employee->prénom }}</span>
+                    <input type="text" name="prénom" value="{{ $employee->prénom }}" class="field-edit input input-bordered w-full hidden">
+                </div>
+                <div class="hidden hidden-input">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <span class="field-display">{{ $employee->email }}</span>
+                    <input type="text" name="email" value="{{ $employee->email }}" class="field-edit input input-bordered w-full hidden">
+                </div>
+                <div class="hidden hidden-input">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fonction</label>
+                    <span class="field-display">{{ $employee->fonction }}</span>
+                    <input type="text" name="fonction" value="{{ $employee->fonction }}" class="field-edit input input-bordered w-full hidden">
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Matricule</label>
                     <span class="field-display">{{ $employee->matricule }}</span>
@@ -144,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('edit-button').classList.toggle('hidden', editMode);
         document.getElementById('save-button').classList.toggle('hidden', !editMode);
         document.getElementById('cancel-button').classList.toggle('hidden', !editMode);
+        document.querySelectorAll('div.hidden-input').forEach(el => el.classList.toggle('hidden', !editMode));
     }
 
     // Delete modal
