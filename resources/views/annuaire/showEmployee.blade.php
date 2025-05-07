@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', $employee->nom . ' ' . $employee->prénom)
+
 @section('content')
 <div class="flex flex-col items-center py-8">
     <!-- Profile Card -->

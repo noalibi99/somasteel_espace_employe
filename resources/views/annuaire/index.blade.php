@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Annuaires des employés')
+
 @section('content')
 <div class="min-h-screen bg-white flex flex-col">
     <!-- Header -->
