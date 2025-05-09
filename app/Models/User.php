@@ -95,6 +95,38 @@ class User extends Authenticatable
         }
     }
 
+    public function isMagasinier()
+    {
+        return $this->type === 'magasinier';
+    }
+
+    public function isDirector()
+    {
+        return $this->type === 'directeur';
+    }
+
+    public function isPurchase()
+    {
+        return $this->type === 'purchase';
+    }
+
+    public function isComptable()
+    {
+        return $this->type === 'comptable';
+    }
+
+
+    // Relations
+    public function purchaseRequests()
+    {
+        return $this->hasMany(PurchaseRequest::class);
+    }
+
+    public function validatedRequests()
+    {
+        return $this->hasMany(PurchaseRequest::class, 'validator_id');
+    }
+
     public function deleteProfilePicture()
     {
         if ($this->profile_picture) {
