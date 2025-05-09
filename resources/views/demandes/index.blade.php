@@ -169,6 +169,17 @@
                 </div>
             </div>
         </div>
+                            <!-- Pagination Links -->
+@if ($demandesConge->hasPages())
+    <div class="pagination">
+        {{ $demandesConge->links('pagination::tailwind') }}
+    </div>
+@else
+    <div class="pagination">
+        <!-- Show an empty pagination bar or any message -->
+        <span>1</span> <!-- For instance, show "Page 1" when there are no items -->
+    </div>
+@endif
     </div>
 
 <!-- New Leave Request Modal -->

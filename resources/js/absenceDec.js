@@ -22,6 +22,8 @@ if (searchInput && resTable) {
 const searchInputRH = document.getElementById('searchInputRH');
     const laminoireTable = document.getElementById('shift-table-laminoire');
     const acierieTable = document.getElementById('shift-table-acierie');
+    const adminTable = document.getElementById('shift-table-administration');
+    const chauffeurTable = document.getElementById('shift-table-chauffeur');
 
     function filterTable(table, filter) {
         if (!table) return;
@@ -29,7 +31,8 @@ const searchInputRH = document.getElementById('searchInputRH');
         rows.forEach(row => {
             // 2nd column: Nom & Prénom
             const nameCell = row.children[1];
-            if (nameCell && nameCell.textContent.toLowerCase().includes(filter)) {
+            const matriculeCell = row.children[0];
+            if (nameCell && nameCell.textContent.toLowerCase().includes(filter) || matriculeCell && matriculeCell.textContent.toLowerCase().includes(filter)) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
@@ -47,6 +50,12 @@ const searchInputRH = document.getElementById('searchInputRH');
             }
             if (acierieTable && !acierieTable.closest('.shift-card-body').classList.contains('hidden')) {
                 filterTable(acierieTable, filter);
+            }
+            if (adminTable && !adminTable.closest('.shift-card-body').classList.contains('hidden')) {
+                filterTable(adminTable, filter);
+            }
+            if (chauffeurTable && !chauffeurTable.closest('.shift-card-body').classList.contains('hidden')) {
+                filterTable(chauffeurTable, filter);
             }
         });
     }

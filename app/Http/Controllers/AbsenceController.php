@@ -27,16 +27,27 @@ class AbsenceController extends Controller
     {
         $usersLaminoire = [];
         $usersAcierie = [];
-        $usersLA = [];
+        $usersAdministration = [];
+        $usersChauffeur = [];
+        $usersLAAC = [];
         // Retrieve users based on the logged-in user's role (RH or Responsable)
         if (Auth::user()->isRH()) {
             $usersLaminoire = User::where('projet', 'LAMINOIR')
-                ->get(['id', 'matricule', 'nom', 'prénom', 'shift_id', 'service']);
+                ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
+                ->paginate();
             $usersAcierie = User::where('projet', 'ACIERIE')
-                ->get(['id', 'matricule', 'nom', 'prénom', 'shift_id', 'service']);
+            ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
+                ->paginate();
+            $usersAdministration = User::where('projet', 'ADMINISTRATION')
+            ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
+                ->paginate();
+            $usersChauffeur = User::where('projet', 'CHAUFFEUR')
+            ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
+                ->paginate();
         } elseif (Auth::user()->isResponsable()) {
-            $usersLA = User::where('responsable_hiarchique', Auth::user()->matricule)->whereIn('projet', ['LAMINOIR', 'ACIERIE'])
-                ->get(['id', 'matricule', 'nom', 'prénom', 'shift_id', 'service']);
+            $usersLAAC = User::where('responsable_hiarchique', Auth::user()->matricule)->whereIn('projet', ['LAMINOIR', 'ACIERIE', 'ADMINISTRATION'])
+                ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
+                ->paginate(10);
         }
 
         $shifts = Shift::all();
@@ -56,16 +67,39 @@ class AbsenceController extends Controller
             ->select('attendances.*', 'shifts.name as shift_name')
             ->get();
 
-        $uniqueServices = User::where('projet', 'LAMINOIR')
+        // $uniqueServices = User::whereIn('projet', ['LAMINOIR', 'ACIERIE', 'ADMINISTRATION', 'CHAUFFEUR'])
+        // ->distinct()
+        // ->get(['service']);
+
+        $LaminoireServices = User::where('projet', 'LAMINOIR')
         ->distinct()
         ->get(['service']);
+
+        $AcierieServices = User::where('projet', 'ACIERIE')
+        ->distinct()
+        ->get(['service']);
+
+        $AdministrationServices = User::where('projet', 'ADMINISTRATION')
+        ->distinct()
+        ->get(['service']);
+
+        $ChauffeurServices = User::where('projet', 'CHAUFFEUR')
+        ->distinct()
+        ->get(['service']);
+
+        $tableServices = [
+            'laminoire' => $LaminoireServices,
+            'acierie' => $AcierieServices,
+            'administration' => $AdministrationServices,
+            'chauffeur' => $ChauffeurServices
+        ];
 
         // dd($uniqueServices);
 
         // Fetch result data
         $résultatData = $this->getResultData($today);
 
-        return view('absence.absenceDec', compact('usersLA','usersLaminoire', 'usersAcierie', 'shifts', 'résultatData', 'attendances', 'today', 'declaredAttendances', 'uniqueServices'));
+        return view('absence.absenceDec', compact('usersLAAC','usersLaminoire', 'usersAcierie', 'usersAdministration', 'usersChauffeur', 'shifts', 'résultatData', 'attendances', 'today', 'declaredAttendances', 'tableServices'));
     }
 
 
@@ -176,11 +210,12 @@ class AbsenceController extends Controller
 
     public function export(Request $request)
     {
+        //dd($request->all());
         // Determine the date to use
         $date = $request->input('date') ?? Carbon::today()->toDateString();
 
         // Fetch data for export
-        $users = User::where('projet', 'LAMINOIR')->get(['id', 'matricule', 'nom', 'prénom', 'service', 'shift_id']);
+        $users = User::whereIn('projet', ['LAMINOIR', 'ACIERIE'])->get(['id', 'matricule', 'nom', 'prénom', 'service', 'shift_id']);
         $declaredAttendances = DB::table('attendances')
             ->join('shifts', 'attendances.shift_id', '=', 'shifts.id')
             ->whereDate('attendances.date', $date)

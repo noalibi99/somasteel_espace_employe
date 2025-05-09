@@ -1,8 +1,8 @@
 <div class="shift-card-body bg-white rounded-lg shadow" id="responsable-shift-table">
     <form action="{{ route('attendance.declare') }}" method="POST">
         @csrf
-        <div class="relative w-60 m-4">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+        <div class="relative w-60 p-4">
+            <span class="absolute inset-y-0 left-4 flex items-center pl-3">
                 <i class="fa-solid fa-magnifying-glass text-lg text-black"></i>
             </span>
             <input 
@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($usersLA as $user)
+                    @foreach ($usersLAAC as $user)
                         @php
                             $status = '';
                             $selectedShift = null;
@@ -77,7 +77,7 @@
             </table>
         </div>
         
-        <div class="flex justify-center">
+        <div class="flex justify-center border-t border-gray-200 pt-4">
             <button type="submit" class="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition font-semibold shadow mb-6">
                 Soumettre la présence
             </button>

@@ -9,7 +9,7 @@
                 <span>Service</span>
                 <select id="service-filter-{{ $tableId }}" class="service-filter border rounded px-2 py-1 text-sm" data-table="{{ $tableId }}">
                     <option value="">All</option>
-                    @foreach ($uniqueServices as $service)
+                    @foreach ($tableServices[$tableId] as $service)
                         <option value="{{ $service->service }}">{{ $service->service }}</option>
                     @endforeach
                 </select>

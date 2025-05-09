@@ -39,7 +39,7 @@
     </div>
 </div>
 
-<div class="shift-card-body d-none" id="acierie">
+<div class="shift-card-body" id="acierie">
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded shadow shift-table" id="shift-table-acierie">
             @include('absence.table-header', ['tableId' => 'acierie'])
@@ -78,6 +78,87 @@
         </table>
     </div>
 </div>
+
+<div class="shift-card-body hidden" id="administration">
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded shadow shift-table" id="shift-table-administration">
+            @include('absence.table-header', ['tableId' => 'administration'])
+            <tbody>
+                @foreach ($usersAdministration as $user)
+                    @php
+                        $status = 'Non déclaré';
+                        $userShift = 'Non déclaré';
+                        foreach ($declaredAttendances as $attendance) {
+                            if ($attendance->user_id == $user->id) {
+                                $status = $attendance->status;
+                                foreach ($shifts as $shift) {
+                                    if ($shift->id == $attendance->shift_id) {
+                                        $userShift = $shift->name;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    @endphp
+                    <tr>
+                        <td class="px-4 py-2 text-center">{{ $user->matricule }}</td>
+                        <td class="px-4 py-2 text-center">{{ $user->nom }} {{ $user->prénom }}</td>
+                        <td class="px-4 py-2 text-center">{{ $user->service }}</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="px-2 py-1 rounded text-xs font-semibold
+                                {{ $status == 'Présent' ? 'bg-green-100 text-green-700' : ($status == 'Absent' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                {{ $status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 text-center">{{ $userShift }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="shift-card-body hidden" id="chauffeur">
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded shadow shift-table" id="shift-table-chaffeur">
+            @include('absence.table-header', ['tableId' => 'chauffeur'])
+            <tbody>
+                @foreach ($usersChauffeur as $user)
+                    @php
+                        $status = 'Non déclaré';
+                        $userShift = 'Non déclaré';
+                        foreach ($declaredAttendances as $attendance) {
+                            if ($attendance->user_id == $user->id) {
+                                $status = $attendance->status;
+                                foreach ($shifts as $shift) {
+                                    if ($shift->id == $attendance->shift_id) {
+                                        $userShift = $shift->name;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    @endphp
+                    <tr>
+                        <td class="px-4 py-2 text-center">{{ $user->matricule }}</td>
+                        <td class="px-4 py-2 text-center">{{ $user->nom }} {{ $user->prénom }}</td>
+                        <td class="px-4 py-2 text-center">{{ $user->service }}</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="px-2 py-1 rounded text-xs font-semibold
+                                {{ $status == 'Présent' ? 'bg-green-100 text-green-700' : ($status == 'Absent' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                {{ $status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 text-center">{{ $userShift }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 <!-- Shift Modal -->
 <div id="editShiftModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">

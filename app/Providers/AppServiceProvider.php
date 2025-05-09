@@ -8,6 +8,7 @@ use App\Models\Demandes_Conge;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
             // @dd($user && $user->hasDemandes());
             return $user && !$user->hasDemandes();
         });
-    
+
+        Paginator::useTailwind();
     }
 }
