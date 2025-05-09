@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <meta name="shifts-route" content="{{ route('shifts.index') }}">
     <title>SomaSteel - @yield('title')</title>
     @vite('resources/css/app.css')
+    @vite(['resources/js/absenceDec.js'])
 </head>
 <body class="min-h-screen bg-gray-50">
 <div class="flex min-h-screen">
@@ -19,5 +23,6 @@
     </div>
 </div>
 @stack('scripts')
+@stack('vite')
 </body>
 </html>

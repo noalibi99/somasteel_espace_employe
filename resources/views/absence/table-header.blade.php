@@ -1,13 +1,13 @@
-@props(['tableId']) 
+@props(['tableId'])
 
-<thead>
+<thead class="bg-orange-50">
     <tr>
-        <th>Matricule</th>
-        <th>Employés</th>
-        <th>
-            <div class="d-flex align-items-center gap-3">
-                Service
-                <select id="service-filter-{{ $tableId }}" class="form-select service-filter" data-table="{{ $tableId }}">
+        <th class="px-4 py-2 text-center">Matricule</th>
+        <th class="px-4 py-2 text-center">Employés</th>
+        <th class="px-4 py-2 text-center">
+            <div class="flex items-center justify-center space-x-2">
+                <span>Service</span>
+                <select id="service-filter-{{ $tableId }}" class="service-filter border rounded px-2 py-1 text-sm" data-table="{{ $tableId }}">
                     <option value="">All</option>
                     @foreach ($uniqueServices as $service)
                         <option value="{{ $service->service }}">{{ $service->service }}</option>
@@ -15,10 +15,10 @@
                 </select>
             </div>
         </th>
-        <th>
-            <div class="d-flex align-items-center gap-3">
-                Présence
-                <select id="presence-filter-{{ $tableId }}" class="form-select presence-filter" data-table="{{ $tableId }}">
+        <th class="px-4 py-2 text-center">
+            <div class="flex items-center justify-center space-x-2">
+                <span>Présence</span>
+                <select id="presence-filter-{{ $tableId }}" class="presence-filter border rounded px-2 py-1 text-sm" data-table="{{ $tableId }}">
                     <option value="">All</option>
                     <option value="Présent">Présent</option>
                     <option value="Absent">Absent</option>
@@ -26,6 +26,6 @@
                 </select>
             </div>
         </th>
-        <th>Shift</th>
+        <th class="px-4 py-2 text-center">Shift</th>
     </tr>
 </thead>
