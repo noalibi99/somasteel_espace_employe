@@ -1,4 +1,4 @@
-<div class="shift-card-body hidden" id="laminoire">
+<div class="shift-card-body {{ $activeTab !== 'laminoire' ? 'hidden' : '' }}" id="laminoire">
 
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded shadow shift-table"  id="shift-table-laminoire">
@@ -37,9 +37,10 @@
             </tbody>
         </table>
     </div>
+    {{ $usersLaminoire->appends(['tab' => 'laminoire'])->links() }}
 </div>
 
-<div class="shift-card-body" id="acierie">
+<div class="shift-card-body {{ $activeTab !== 'acierie' ? 'hidden' : '' }}" id="acierie">
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded shadow shift-table" id="shift-table-acierie">
             @include('absence.table-header', ['tableId' => 'acierie'])
@@ -77,9 +78,10 @@
             </tbody>
         </table>
     </div>
+    {{ $usersAcierie->appends(['tab' => 'acierie'])->links() }}
 </div>
 
-<div class="shift-card-body hidden" id="administration">
+<div class="shift-card-body {{ $activeTab !== 'administration' ? 'hidden' : '' }}" id="administration">
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded shadow shift-table" id="shift-table-administration">
             @include('absence.table-header', ['tableId' => 'administration'])
@@ -116,10 +118,12 @@
                 @endforeach
             </tbody>
         </table>
+
     </div>
+    {{ $usersAdministration->appends(['tab' => 'administration'])->links() }}
 </div>
 
-<div class="shift-card-body hidden" id="chauffeur">
+<div class="shift-card-body {{ $activeTab !== 'chauffeur' ? 'hidden' : '' }}" id="chauffeur">
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded shadow shift-table" id="shift-table-chaffeur">
             @include('absence.table-header', ['tableId' => 'chauffeur'])
@@ -157,6 +161,7 @@
             </tbody>
         </table>
     </div>
+    {{ $usersChauffeur->appends(['tab' => 'chauffeur'])->links() }}
 </div>
 
 

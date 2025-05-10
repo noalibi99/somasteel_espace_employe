@@ -25,6 +25,7 @@ class AbsenceController extends Controller
 
     public function index(Request $request)
     {
+        $activeTab = $request->input('tab', 'acierie');
         $usersLaminoire = [];
         $usersAcierie = [];
         $usersAdministration = [];
@@ -34,16 +35,16 @@ class AbsenceController extends Controller
         if (Auth::user()->isRH()) {
             $usersLaminoire = User::where('projet', 'LAMINOIR')
                 ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
-                ->paginate();
+                ->paginate(10);
             $usersAcierie = User::where('projet', 'ACIERIE')
             ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
-                ->paginate();
+                ->paginate(10);
             $usersAdministration = User::where('projet', 'ADMINISTRATION')
             ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
-                ->paginate();
+                ->paginate(10);
             $usersChauffeur = User::where('projet', 'CHAUFFEUR')
             ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
-                ->paginate();
+                ->paginate(10);
         } elseif (Auth::user()->isResponsable()) {
             $usersLAAC = User::where('responsable_hiarchique', Auth::user()->matricule)->whereIn('projet', ['LAMINOIR', 'ACIERIE', 'ADMINISTRATION'])
                 ->select('id', 'matricule', 'nom', 'prénom', 'shift_id', 'service')
@@ -99,7 +100,7 @@ class AbsenceController extends Controller
         // Fetch result data
         $résultatData = $this->getResultData($today);
 
-        return view('absence.absenceDec', compact('usersLAAC','usersLaminoire', 'usersAcierie', 'usersAdministration', 'usersChauffeur', 'shifts', 'résultatData', 'attendances', 'today', 'declaredAttendances', 'tableServices'));
+        return view('absence.absenceDec', compact('activeTab','usersLAAC','usersLaminoire', 'usersAcierie', 'usersAdministration', 'usersChauffeur', 'shifts', 'résultatData', 'attendances', 'today', 'declaredAttendances', 'tableServices'));
     }
 
 

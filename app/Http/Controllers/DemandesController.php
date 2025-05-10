@@ -29,13 +29,21 @@ class DemandesController extends Controller
             $demandesCongeFromDB = DB::table('dcinfo')->paginate(5);
         }elseif ($user->isResponsable()) {
             //responsable vas voire les demande didier a lui
-            $demandesCongeFromDB = DB::select('select * from dcinfo where to_resp = ? or user_id = ?', [$user->matricule, $user->id])->paginate(10);
+            $demandesCongeFromDB = DB::table('dcinfo')
+                ->where('to_resp', '=', $user->matricule)
+                ->orWhere('user_id', '=', $user->id)
+                ->paginate(5);
             // @dd($demandesCongeFromDB, $user->matricule);
         }elseif($user->isDirecteur()){
             //directeur vas voire les demande didier a lui
-            $demandesCongeFromDB = DB::select('select * from dcinfo where to_dir = ? or user_id = ?', [$user->matricule, $user->id])->paginate(10);
+            $demandesCongeFromDB = DB::table('dcinfo')
+                ->where('to_dir', '=', $user->matricule)
+                ->orWhere('user_id', '=', $user->id)
+                ->paginate(5);
         }else{//ouvirer
-            $demandesCongeFromDB = DB::select('select * from dcinfo where user_id = ?', [$user->id])->paginate(10);
+            $demandesCongeFromDB = DB::table('dcinfo')
+                ->where('user_id', '=', $user->id)
+                ->paginate(5);
         }
         // @dd($demandesCongeFromDB, $demandesCongeFromDB);
         // $demandesFromDB = Demande::where(); specify wich data for each type of users

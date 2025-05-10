@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Demandes Congé')
@@ -169,18 +168,12 @@
                 </div>
             </div>
         </div>
-                            <!-- Pagination Links -->
-@if ($demandesConge->hasPages())
+    </div>
     <div class="pagination">
         {{ $demandesConge->links('pagination::tailwind') }}
     </div>
-@else
-    <div class="pagination">
-        <!-- Show an empty pagination bar or any message -->
-        <span>1</span> <!-- For instance, show "Page 1" when there are no items -->
-    </div>
-@endif
-    </div>
+    <!-- Pagination Links -->
+    
 
 <!-- New Leave Request Modal -->
 <div id="leaveModal" class="{{ $errors->any() ? '' : 'hidden' }} fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-20">

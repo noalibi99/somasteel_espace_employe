@@ -115,8 +115,12 @@
                         @endforelse
                     </tbody>
                 </table>
+                
             </div>
         </div>
+    </div>
+    <div class="pagination">
+        {{ $employees->links('pagination::tailwind') }}
     </div>
 </div>
 
