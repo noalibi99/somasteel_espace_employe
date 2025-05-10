@@ -146,7 +146,7 @@ class AnnuaireController extends Controller
         $users = User::where('service', $depart)
             ->where('projet', $projet)
             ->select('id', 'nom', 'prénom', 'matricule', 'type', 'fonction', 'service AS depart', 'projet', 'profile_picture')
-            ->get();
+            ->paginate(5);
         $responsables = DB::table('responsables')->get();
         $directeurs = DB::table('directeurs')->get();
 
@@ -205,6 +205,7 @@ class AnnuaireController extends Controller
                 'fonction' => 'required|string|max:255',
                 'service' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
+                'solde_conge' => 'required|numeric|max:30',
                 'responsable_hiarchique' => 'nullable|string|max:255',
                 'directeur' => 'nullable|string|max:255',
             ];
@@ -222,6 +223,45 @@ class AnnuaireController extends Controller
             $employee->projet = $projet;
             $employee->refresh();
 
+            
+            if ($employee->type === 'responsable') {
+                // chercher le dernier responsable
+                $currentResponsible = User::where('service', $employee->service)
+                    ->where('projet', $employee->projet)
+                    ->where('type', 'responsable')
+                    ->where('id', '!=', $employee->id)
+                    ->first();
+            
+                // si le responsable actuel est trouvé changer le type a ouvrier
+                if ($currentResponsible) {
+                    $currentResponsible->update(['type' => 'ouvrier']);
+                }
+            
+                // mettre a jour le responsable hiarchique de tous les employés y compris le responsable actuel
+                User::where('service', $employee->service)
+                    ->where('projet', $employee->projet)
+                    ->update(['responsable_hiarchique' => $employee->matricule]);
+            }            
+            
+            //idem pour le directeur
+            
+
+            if ($employee->type === 'directeur') {
+                $currentDirecteur = User::where('service', $employee->service)
+                    ->where('projet', $employee->projet)
+                    ->where('type', 'directeur')
+                    ->where('id', '!=', $employee->id)
+                    ->first();
+            
+                if ($currentDirecteur) {
+                    $currentDirecteur->update(['type' => 'ouvrier']);
+                }
+            
+                User::where('service', $employee->service)
+                    ->where('projet', $employee->projet)
+                    ->update(['directeur' => $employee->matricule]);
+            }
+            
             // Redirect back with a success message
             return redirect()->route('annuaire.depart', [$employee->projet, $employee->service])->with('success', 'Informations modifiées avec succès');
         } catch (Exception $e) {
@@ -259,10 +299,22 @@ class AnnuaireController extends Controller
             $user->projet = $validatedData['projet'];
             $user->type = $validatedData['type'];
             $user->solde_conge = $validatedData['solde_conge'] ?? null;
-            $user->responsable_hiarchique = $validatedData['responsable_hiarchique'] ?? null;
-            $user->directeur = $validatedData['directeur'] ?? null;
+            $user->responsable_hiarchique = $validatedData['responsable_hiarchique'] ?? DB::table('responsables')->where('service', $validatedData['service'])->where('projet', $validatedData['projet'])->first()->matricule;
+            $user->directeur = $validatedData['directeur'] ?? DB::table('directeurs')->where('service', $validatedData['service'])->where('projet', $validatedData['projet'])->first()->matricule;
             $user->password = bcrypt($validatedData['password']);
             $user->save();
+
+            if ($user->type === 'responsable') {
+                User::where('service', $validatedData['service'])
+                    ->where('projet', $validatedData['projet'])
+                    ->update(['responsable_hiarchique' => $user->matricule]);
+            }
+
+            if ($user->type === 'directeur') {
+                User::where('service', $validatedData['service'])
+                    ->where('projet', $validatedData['projet'])
+                    ->update(['directeur' => $user->matricule]);
+            }
 
             return redirect()->route('annuaire.depart', [$validatedData['projet'], $validatedData['service']])->with('success', 'Employee crée avec succès.');
         } catch (Exception $e) {

@@ -26,16 +26,24 @@ class DemandesController extends Controller
         //                             ->get();
         if ($user->isAdmin() || $user->isRH()) {
             //admin vision global
-            $demandesCongeFromDB = DB::table('dcinfo')->get();
+            $demandesCongeFromDB = DB::table('dcinfo')->paginate(5);
         }elseif ($user->isResponsable()) {
             //responsable vas voire les demande didier a lui
-            $demandesCongeFromDB = DB::select('select * from dcinfo where to_resp = ? or user_id = ?', [$user->matricule, $user->id]) ;
+            $demandesCongeFromDB = DB::table('dcinfo')
+                ->where('to_resp', '=', $user->matricule)
+                ->orWhere('user_id', '=', $user->id)
+                ->paginate(5);
             // @dd($demandesCongeFromDB, $user->matricule);
         }elseif($user->isDirecteur()){
             //directeur vas voire les demande didier a lui
-            $demandesCongeFromDB = DB::select('select * from dcinfo where to_dir = ? or user_id = ?', [$user->matricule, $user->id]);
+            $demandesCongeFromDB = DB::table('dcinfo')
+                ->where('to_dir', '=', $user->matricule)
+                ->orWhere('user_id', '=', $user->id)
+                ->paginate(5);
         }else{//ouvirer
-            $demandesCongeFromDB = DB::select('select * from dcinfo where user_id = ?', [$user->id]);
+            $demandesCongeFromDB = DB::table('dcinfo')
+                ->where('user_id', '=', $user->id)
+                ->paginate(5);
         }
         // @dd($demandesCongeFromDB, $demandesCongeFromDB);
         // $demandesFromDB = Demande::where(); specify wich data for each type of users

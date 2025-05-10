@@ -8,6 +8,7 @@ use App\Models\Demandes_Conge;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
 
             // Get the start and end dates from the request data
             $start_date = $validator->getData()['date_debut'];
-            $end_date = $value;
+            $end_date = $validator->getData()['date_fin'];
 
             // Calculate the difference in days
             $diffInDays = strtotime($end_date) - strtotime($start_date);
@@ -50,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
             // @dd($user && $user->hasDemandes());
             return $user && !$user->hasDemandes();
         });
-    
+
+        Paginator::useTailwind();
     }
 }
