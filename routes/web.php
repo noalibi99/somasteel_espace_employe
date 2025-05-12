@@ -19,6 +19,8 @@ use App\Http\Controllers\ShiftController;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Controllers\Purchase\PurchaseRequestController;
+
 
 
 
@@ -31,7 +33,47 @@ use Illuminate\Support\Facades\DB;
 
 // Route::get('/SomaProduit', [BlogeController::class, 'produitIndex'])->name('bloge.produit');
 
+
+Route::get('/test-email', function() {
+    try {
+        Mail::raw('Test email', function($message) {
+            $message->to(env('TEST_EMAIL', 'fallback@example.com'))
+            ->subject('Test SMTP');
+        });
+        return "Email envoyé avec succès!";
+    } catch (\Exception $e) {
+        return "Erreur: " . $e->getMessage();
+    }
+});
+
+
 Route::middleware('auth')->group(function () {
+
+    Route::prefix('purchase')->group(function () {
+        // Routes manuelles
+        Route::get('requests', [PurchaseRequestController::class, 'index'])->name('purchase.requests.index');
+        Route::get('requests/create', [PurchaseRequestController::class, 'create'])->name('purchase.requests.create');
+        Route::get('requests/pending', [PurchaseRequestController::class, 'pendingApproval'])
+            ->name('purchase.requests.pending')
+            ->middleware('can:viewAny,App\Models\PurchaseRequest');
+        Route::post('requests', [PurchaseRequestController::class, 'store'])->name('purchase.requests.store');
+        Route::get('requests/{request}', [PurchaseRequestController::class, 'show'])->name('purchase.requests.show');
+        
+        // Routes d'approbation
+        Route::post('requests/{request}/approve', [PurchaseRequestController::class, 'approve'])
+            ->name('purchase.requests.approve');
+        Route::post('requests/{request}/reject', [PurchaseRequestController::class, 'reject'])
+            ->name('purchase.requests.reject');
+            
+        // Route::get('requests/pending', [PurchaseRequestController::class, 'pendingApproval'])
+        //     ->name('purchase.requests.pending')
+        //     ->middleware('can:viewAny,App\Models\PurchaseRequest');
+
+        // Route::get('requests/pending', [PurchaseRequestController::class, 'pending'])->name('purchase.requests.pending');
+    });
+    
+
+
     Route::put('/home/updateEmail', [HomeController::class, 'updateEmail'])->name('home.update');
     Route::put('/home/update-password', [HomeController::class, 'updatePassword'])->name('home.updatePassword');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
