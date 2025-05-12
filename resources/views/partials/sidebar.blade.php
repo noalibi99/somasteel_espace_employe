@@ -13,11 +13,11 @@
     <div class="flex flex-col h-full p-4">
         <div class="flex justify-center py-6 border-b border-gray-100">
             <div class="flex items-center">
-                <img src="{{ asset('images/logosomasteel.png') }}" alt="SomaSteel Logo" class="h-10 w-auto">
+                <a href="{{ route('home') }}"> <img src="{{ asset('images/logosomasteel.png') }}" alt="SomaSteel Logo" class="h-10 w-auto"></a>
             </div>
         </div>
 
-        <nav class="flex flex-col gap-1 mt-8">
+        <nav class="flex flex-col gap-1 mt-2">
         @guest
             <a
                 href="{{ route('login') }}"
@@ -28,6 +28,9 @@
             </a>
         @endguest
         @auth
+        <span class="flex items-center gap-3 rounded-md px-1 py-2 text-sm text-secondary font-semibold">
+            Gestion du personnel
+        </span>
             <a
                 href="{{ route('home') }}"
                 class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('home') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
@@ -84,6 +87,35 @@
             </a>
         @endif
         </nav>
+
+        <i class="border-b border-gray-200 w-full h-px my-4"></i>
+        <!-- Purchase tabs -->
+        @auth
+        <span class="flex items-center gap-3 rounded-md px-1 py-2 text-sm text-secondary font-semibold">
+            Gestion d'achat
+        </span>
+        <a
+                href="{{ route('purchase.requests.index') }}"
+                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('purchase.requests.index') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+            >
+                <i class="fas fa-shopping-cart"></i>
+                Demande d'achat
+            </a>
+        <a
+                href="{{ route('purchase.requests.index') }}"
+                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('/') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+            >
+                <i class="ml-1 fa-solid fa-clipboard-list"></i>
+                Bon de commande
+            </a>
+        <a
+                href="{{ route('purchase.suppliers.index') }}"
+                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('purchase.suppliers.index') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+            >
+                <i class="fa-solid fa-users"></i>
+                Suppliers
+        </a>
+        @endauth
 
         @if(auth()->user())
         <div class="mt-auto pt-6 border-t border-gray-100">

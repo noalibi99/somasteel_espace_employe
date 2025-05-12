@@ -109,6 +109,8 @@ if ($directors->isEmpty()) {
     public function show(PurchaseRequest $request)
     {
         $this->authorize('view', $request);
+
+        
         
         return view('purchase.requests.show', compact('request'));
     }

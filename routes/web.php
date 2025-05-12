@@ -20,6 +20,8 @@ use App\Http\Controllers\ShiftController;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Purchase\PurchaseRequestController;
+use App\Http\Controllers\Purchase\SupplierController;
+
 
 
 
@@ -64,6 +66,9 @@ Route::middleware('auth')->group(function () {
             ->name('purchase.requests.approve');
         Route::post('requests/{request}/reject', [PurchaseRequestController::class, 'reject'])
             ->name('purchase.requests.reject');
+
+        // Routes suppliers
+        Route::get('suppliers', [SupplierController::class, 'index'])->name('purchase.suppliers.index');
             
         // Route::get('requests/pending', [PurchaseRequestController::class, 'pendingApproval'])
         //     ->name('purchase.requests.pending')
@@ -75,9 +80,9 @@ Route::middleware('auth')->group(function () {
 
 
     Route::put('/home/updateEmail', [HomeController::class, 'updateEmail'])->name('home.update');
-    Route::put('/home/update-password', [HomeController::class, 'updatePassword'])->name('home.updatePassword');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::put('/home/update-picture', [HomeController::class, 'updatePicture'])->name('profile.updatePicture');
+    Route::put('/home/updatePassword', [HomeController::class, 'updatePassword'])->name('home.updatePassword');
     Route::get('/home/profiles_imgs/{filename}', [HomeController::class ,'getProfileImage'])->name('profile.image');
     Route::delete('/home/delete-picture', [HomeController::class,'deleteProfilePicture'])->name('home.delete.picture');
     // dd('test');
@@ -87,9 +92,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/demandes/{demande_id}/decide', [DemandesCongeController::class, 'update'])->name('demandeconge.update');
     Route::get('/demandes/download/{dc_id}', [DemandesCongeController::class, 'downloadConge'])->name('demandeConge.downloadConge');
 
-
-
-
+    
+    
+    
     Route::middleware(IsRhOrResp::class)->group(function () {
         //Absence
         Route::get('/AbsDeclaration', [AbsenceController::class, 'index'])->name('absenceDec.index');
@@ -100,9 +105,9 @@ Route::middleware('auth')->group(function () {
         Route::put('/manage-teams/{id}', [AbsenceController::class, 'updateEquipe'])->name('teams.update');
         Route::post('/create-team', [AbsenceController::class, 'createEquipe']);
         Route::delete('/delete-team/{id}', [AbsenceController::class, 'deleteEquipe']);
-
+        
         Route::get('/download-planning', [AbsenceController::class, 'downloadPlanning'])->name('download-planning');
-
+        
         Route::get('/export', [AbsenceController::class, 'export'])->name('export.shifts');
 
 
@@ -114,7 +119,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/Annuaire/{projet}/{depart}/{employee_nom}/{employee_id}', [AnnuaireController::class,'showEmployee'])->name('annuaire.employee');//done
         Route::post('/Annuaire/create-department', [AnnuaireController::class,'storeService'])->name('annuaire.depart.store');
         Route::delete('/Annuaire/delete-department', [AnnuaireController::class,'deleteService'])->name('annuaire.depart.delete');
-
+        
         // Route::get('/Annuaire/{depart}/{employee_nom}_{employee_id}/edit', [AnnuaireController::class, 'editEmp'])->name('annuaire.editEmployee');
         Route::put('/Annuaire/update/{projet}/{employee_id}', [AnnuaireController::class, 'updateEmp'])->name('annuaire.employee.update');
         Route::put('/Annuaire/updatePass/{employee_id}', [AnnuaireController::class, 'changePassword'])->name('annuaire.employee.changePassword');
@@ -154,7 +159,3 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/updateSolde', [ProfilController::class, 'updateSolde']);
-
-Route::fallback(function () {
-    return view('not-found');
-});
