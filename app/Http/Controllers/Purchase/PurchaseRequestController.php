@@ -27,7 +27,20 @@ class PurchaseRequestController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('purchase.requests.index', compact('requests'));
+            $currentUser = auth()->user();
+        return view('purchase.requests.index', compact('requests','currentUser'));
+        
+    }
+
+    public function AllRequests()
+    {
+        $Allrequests = PurchaseRequest::with(['user', 'validator'])
+            ->latest()
+            ->paginate(10);
+
+            $currentUser = auth()->user();
+        return view('purchase.requests.allpurchase', compact('Allrequests','currentUser'));
+        
     }
 
     public function create()
