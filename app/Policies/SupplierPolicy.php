@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierPolicy
 {
@@ -21,7 +22,7 @@ class SupplierPolicy
      */
     public function view(User $user, Supplier $supplier): bool
     {
-        //
+        return true;
     }
 
     /**

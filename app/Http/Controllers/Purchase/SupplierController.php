@@ -23,15 +23,25 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        //
-    }
+        $this->authorize('create', Supplier::class);
+        return view('purchase.suppliers.create');
+    }  
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', Supplier::class);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'required|string|max:255',
+        ]);
+
+        Supplier::create($validated);
+
+        return redirect()->route('purchase.suppliers.index')->with('success', 'Fournisseur créé avec succès.');
     }
 
     /**
@@ -39,7 +49,8 @@ class SupplierController extends Controller
      */
     public function show(Supplier $supplier)
     {
-        //
+        $this->authorize('view', $supplier);
+        return view('purchase.suppliers.show', compact('supplier'));
     }
 
     /**
@@ -47,7 +58,8 @@ class SupplierController extends Controller
      */
     public function edit(Supplier $supplier)
     {
-        //
+        $this->authorize('update', $supplier);
+        return view('purchase.suppliers.edit', compact('supplier'));
     }
 
     /**
@@ -55,7 +67,16 @@ class SupplierController extends Controller
      */
     public function update(Request $request, Supplier $supplier)
     {
-        //
+        $this->authorize('update', $supplier);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'required|string|max:255',
+        ]);
+
+        $supplier->update($validated);
+
+        return redirect()->route('purchase.suppliers.index')->with('success', 'Fournisseur mis à jour avec succès.');
     }
 
     /**
@@ -63,6 +84,8 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //
+        $this->authorize('delete', $supplier);
+        $supplier->delete();
+        return redirect()->route('purchase.suppliers.index')->with('success', 'Fournisseur supprimé avec succès.');
     }
 }

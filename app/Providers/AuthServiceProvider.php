@@ -9,6 +9,7 @@ class AuthServiceProvider extends ServiceProvider
 
     protected $policies = [
         \App\Models\PurchaseRequest::class => \App\Policies\PurchaseRequestPolicy::class,
+        \App\Models\Supplier::class => \App\Policies\SupplierPolicy::class,
     ];
     
     /**
