@@ -167,3 +167,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/updateSolde', [ProfilController::class, 'updateSolde']);
+
+Route::get('/bon-de-commande', function () {
+    return view('commandes.show');
+})->name('bondecommande');

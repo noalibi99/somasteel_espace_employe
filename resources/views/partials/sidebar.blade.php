@@ -102,8 +102,8 @@
                 Demande d'achat
             </a>
         <a
-                href="{{ route('purchase.requests.index') }}"
-                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('/') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+                href="{{ route('bondecommande') }}"
+                class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('bondecommande') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
             >
                 <i class="ml-1 fa-solid fa-clipboard-list"></i>
                 Bon de commande
