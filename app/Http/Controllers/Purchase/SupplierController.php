@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Purchase;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class SupplierController extends Controller
 {
     /**
@@ -13,7 +13,9 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return view('purchase.suppliers.index');
+        $currentUser = Auth::user();
+        $suppliers = Supplier::paginate(10);
+        return view('purchase.suppliers.index', compact('suppliers', 'currentUser'));
     }
 
     /**

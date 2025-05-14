@@ -231,7 +231,8 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Motif</label>
                 <textarea name="motif" rows="3"
                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange"
-                          required placeholder="Veuillez indiquer le motif de votre demande de congé...">{{ old('motif') }}</textarea>
+                          required 
+                          placeholder="Veuillez indiquer le motif de votre demande de congé...">{{ old('motif') }}</textarea>
             </div>
 
             <div class="mb-4">
@@ -269,7 +270,8 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Raison du refus</label>
                 <textarea id="raison-refus" rows="4" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                          placeholder="Veuillez indiquer la raison du refus..."></textarea>
+                          placeholder="Veuillez indiquer la raison du refus..."
+                          minlength="10"></textarea>
             </div>
             <div class="flex justify-end space-x-3">
                 <button id="annuler-refus" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700">

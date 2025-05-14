@@ -69,6 +69,16 @@ Route::middleware('auth')->group(function () {
 
         // Routes suppliers
         Route::get('suppliers', [SupplierController::class, 'index'])->name('purchase.suppliers.index');
+        Route::get('suppliers/create', [SupplierController::class, 'create'])->name('purchase.suppliers.create')
+        ->middleware('can:create,App\Models\Supplier');
+        Route::post('suppliers', [SupplierController::class, 'store'])->name('purchase.suppliers.store');
+        Route::get('suppliers/{supplier}', [SupplierController::class, 'show'])->name('purchase.suppliers.show');
+        Route::get('suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('purchase.suppliers.edit')
+        ->middleware('can:update,App\Models\Supplier');
+        Route::put('suppliers/{supplier}', [SupplierController::class, 'update'])->name('purchase.suppliers.update')
+        ->middleware('can:update,App\Models\Supplier');
+        Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('purchase.suppliers.destroy')
+        ->middleware('can:delete, supplier');
             
         // Route::get('requests/pending', [PurchaseRequestController::class, 'pendingApproval'])
         //     ->name('purchase.requests.pending')
