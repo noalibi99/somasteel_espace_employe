@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('purchase')->group(function () {
         // Routes manuelles
         Route::get('requests', [PurchaseRequestController::class, 'index'])->name('purchase.requests.index');
+        Route::get('requests/All', [PurchaseRequestController::class, 'AllRequests'])->name('purchase.requests.allpurchase');
+
         Route::get('requests/create', [PurchaseRequestController::class, 'create'])->name('purchase.requests.create');
         Route::get('requests/pending', [PurchaseRequestController::class, 'pendingApproval'])
             ->name('purchase.requests.pending')
