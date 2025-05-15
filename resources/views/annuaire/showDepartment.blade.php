@@ -120,7 +120,7 @@
         </div>
     </div>
     <div class="pagination">
-        {{ $employees->links('pagination::tailwind') }}
+        {{ $employees->links('pagination::somasteel') }}
     </div>
 </div>
 

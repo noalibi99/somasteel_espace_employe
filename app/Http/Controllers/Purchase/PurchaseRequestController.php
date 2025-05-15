@@ -34,6 +34,7 @@ class PurchaseRequestController extends Controller
 
     public function AllRequests()
     {
+        $this->authorize('viewAny', PurchaseRequest::class);
         $Allrequests = PurchaseRequest::with(['user', 'validator'])
             ->latest()
             ->paginate(10);

@@ -11,6 +11,8 @@
     <title>SomaSteel - @yield('title')</title>
     @vite('resources/css/app.css')
     @vite(['resources/js/absenceDec.js'])
+    @vite(['resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="min-h-screen bg-gray-50">
 <div class="flex min-h-screen">

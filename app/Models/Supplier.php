@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Supplier extends Model
 {
     protected $fillable = [
-        'id',
-        'name',
-        'contact_email',
+        'company_name',
+        'contact_first_name',
+        'contact_last_name',
         'contact_phone',
+        'contact_email',
+        'city',
+        'country',
     ];
     public function offers()
     {

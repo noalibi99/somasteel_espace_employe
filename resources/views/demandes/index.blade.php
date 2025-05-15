@@ -49,7 +49,7 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($demandesConge as $demandeConge)
-                                <tr>
+                                <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {{ $demandeConge->id }}
                                     </td>
@@ -136,7 +136,16 @@
                                                         ($verifierDC->isAcceptedByResp($demandeConge->id) && $currentUser->isResponsable()) ||
                                                         ($verifierDC->isAcceptedByDir($demandeConge->id) && $currentUser->isDirecteur()) ||
                                                         ($verifierDC->isAcceptedByRH($demandeConge->id) && $currentUser->isRH())
-                                                    ) disabled opacity-50 @endif">
+                                                    ) disabled opacity-50 @endif"
+                                                     @disabled(
+                                                        $demande->areRefused($demandeConge->d_id) || $demande->areValidated($demandeConge->d_id) ||
+                                                        ($demande->dmOwnerResp($demandeConge->d_id) && $currentUser->isResponsable()) ||
+                                                        ($demande->dmOwnerDir($demandeConge->d_id) && $currentUser->isDirecteur()) ||
+                                                        ($demande->dmOwnerRH($demandeConge->d_id) && $currentUser->isRH()) ||
+                                                        ($verifierDC->isAcceptedByResp($demandeConge->id) && $currentUser->isResponsable()) ||
+                                                        ($verifierDC->isAcceptedByDir($demandeConge->id) && $currentUser->isDirecteur()) ||
+                                                        ($verifierDC->isAcceptedByRH($demandeConge->id) && $currentUser->isRH())
+                                                    )>
                                                     <i class="fa fa-xmark"></i>
                                                 </button>
                                             @endif
@@ -170,7 +179,7 @@
         </div>
     </div>
     <div class="pagination">
-        {{ $demandesConge->links('pagination::tailwind') }}
+        {{ $demandesConge->links('pagination::somasteel') }}
     </div>
     <!-- Pagination Links -->
     

@@ -12,12 +12,12 @@
            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-somasteel-orange hover:bg-somasteel-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
             <i class="fa fa-plus mr-2"></i> Nouvelle Demande
         </a>
-        @if($currentUser->isDirector())         
+        @can('viewAny', \App\Models\PurchaseRequest::class)         
         <a href="{{ route('purchase.requests.allpurchase') }}" 
            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-somasteel-orange hover:bg-somasteel-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
             <i class="fa fa-list mr-2"></i> Toutes les Demandes
         </a>
-        @endif
+        @endcan
     </div>
 </div>
 
@@ -51,10 +51,10 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($requests as $request)
-                                <tr>
+                                <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $request->id }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->created_at->format('d/m/Y H:i') }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">{{ $request->user->nom }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">{{ $request->user->nom.' '.$request->user->prénom }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                        <span class="px-2 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full
                                             @if($request->status === 'approved') bg-green-100 text-green-800
@@ -71,7 +71,7 @@
                                             {{ ucfirst($request->status ?? 'en Attend') }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->validator?->nom ?? '-' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->validator?->nom.' '.$request->validator?->prénom ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex gap-2">
     <a href="{{ route('purchase.requests.show', $request) }}" 
        class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-somasteel-orange hover:bg-somasteel-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
