@@ -23,7 +23,7 @@
                     <th class="px-4 py-2 font-semibold">ID</th>
                     <th class="px-4 py-2 font-semibold">ID RFQ</th>
                     <th class="px-4 py-2 font-semibold">Fournisseur</th>
-                    <th class="px-4 py-2 font-semibold">Cicle</th>
+                    <th class="px-4 py-2 font-semibold">Crée le</th>
                     <th class="px-4 py-2 font-semibold">Article</th>
                     <th class="px-4 py-2 font-semibold">Status</th>
                     <th class="px-4 py-2 font-semibold">Total</th>
@@ -36,8 +36,8 @@
                         <td class="px-4 py-2" x-text="commande.id"></td>
                         <td class="px-4 py-2" x-text="commande.rfq"></td>
                         <td class="px-4 py-2" x-text="commande.fournisseur"></td>
-                        <td class="px-4 py-2" x-text="commande.cicle"></td>
-                        <td class="px-4 py-2" x-text="commande.article"></td>
+                        <td class="px-4 py-2" x-text="commande.created_at"></td>
+                        <td class="px-4 py-2" x-text="commande.articles.length"></td>
                         <td class="px-4 py-2">
                             <span :class="commande.status === 'Validé' ? 'bg-green-100 text-green-800' : (commande.status === 'En cours' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') + ' px-2 py-1 rounded-full text-xs'" x-text="commande.status"></span>
                         </td>
@@ -118,8 +118,7 @@ function bonDeCommande() {
                 id: 'PO-001',
                 rfq: 'RFQ039',
                 fournisseur: 'Fournisseur1',
-                cicle: 10,
-                article: '6 Juin 2024',
+                created_at: '06/06/2024',
                 status: 'En cours',
                 total: '120000DH',
                 articles: [
@@ -132,8 +131,7 @@ function bonDeCommande() {
                 id: 'PO-002',
                 rfq: 'RFQ035',
                 fournisseur: 'Fournisseur2',
-                cicle: 9,
-                article: '6 Juin 2024',
+                created_at: '06/06/2024',
                 status: 'En cours',
                 total: '85000DH',
                 articles: [
@@ -145,8 +143,7 @@ function bonDeCommande() {
                 id: 'PO-003',
                 rfq: 'RFQ060',
                 fournisseur: 'Fournisseur2',
-                cicle: 5,
-                article: '9 Juin 2024',
+                created_at: '09/06/2024',
                 status: 'Validé',
                 total: '49000DH',
                 articles: [
