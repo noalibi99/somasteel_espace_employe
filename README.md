@@ -16,7 +16,7 @@ Ce projet est une application Laravel conçue pour gérer l'espace employé de S
 1.  **Cloner le dépôt**:
     Si vous partez d'un dépôt Git :
     ```bash
-    git clone https://github.com/San-AMRANI/somasteel_espace_employe.git
+    git clone https://github.com/noalibi99/somasteel_espace_employe/tree/hamza-dev.git
     cd somasteel_espace_employe
     ```
     Si vous avez les fichiers localement, naviguez simplement vers le répertoire du projet.
