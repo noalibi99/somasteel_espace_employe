@@ -12,13 +12,13 @@ class PurchaseRequestPolicy
 
     public function view(User $user, PurchaseRequest $request)
     {
-        return $user->id === $request->user_id || 
+        return $user->id === $request->user_id ||
                $user->isDirecteur($user->id);
     }
 
     public function approve(User $user, PurchaseRequest $request)
     {
-        return $user->isDirecteur($user->id) && $request->status === 'pending';
+        return $user->isDirecteur($user->id);
     }
     public function viewAny(User $user)
 {

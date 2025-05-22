@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class SupplierController extends Controller
 {
     /**
@@ -38,7 +39,7 @@ class SupplierController extends Controller
     {
         $this->authorize('create', Supplier::class);
         return view('purchase.suppliers.create');
-    }  
+    }
 
     /**
      * Store a newly created resource in storage.

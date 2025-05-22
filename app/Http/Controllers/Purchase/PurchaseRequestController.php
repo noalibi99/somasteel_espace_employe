@@ -9,11 +9,12 @@ use App\Models\Article;
 use App\Notifications\PurchaseRequestSubmitted;
 use App\Notifications\PurchaseRequestApproved;
 use App\Notifications\PurchaseRequestRejected;
+use App\Notifications\ApprovedPRForwardedToPurchasing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
-use App\Models\User; 
+use App\Models\User;
 
 class PurchaseRequestController extends Controller
 {
@@ -29,7 +30,7 @@ class PurchaseRequestController extends Controller
 
             $currentUser = auth()->user();
         return view('purchase.requests.index', compact('requests','currentUser'));
-        
+
     }
 
     public function AllRequests()
@@ -41,7 +42,7 @@ class PurchaseRequestController extends Controller
 
             $currentUser = auth()->user();
         return view('purchase.requests.allpurchase', compact('Allrequests','currentUser'));
-        
+
     }
 
     public function create()
@@ -107,7 +108,7 @@ if ($directors->isEmpty()) {
     Log::warning('Aucun directeur trouvé pour notification');
 } else {
     Log::info('Nombre de directeurs à notifier: ' . $directors->count());
-    
+
     try {
         Notification::send($directors, new PurchaseRequestSubmitted($purchaseRequest));
         Log::info('Notifications envoyées avec succès');
@@ -124,8 +125,8 @@ if ($directors->isEmpty()) {
     {
         $this->authorize('view', $request);
 
-        
-        
+
+
         return view('purchase.requests.show', compact('request'));
     }
 
@@ -141,6 +142,12 @@ if ($directors->isEmpty()) {
 
         // Notifier le demandeur
         $request->user->notify(new PurchaseRequestApproved($request));
+
+        // Notifier le service achat
+        $purchasingUsers = User::where('type', 'purchase')->get();
+        if ($purchasingUsers->isNotEmpty()) {
+            Notification::send($purchasingUsers, new ApprovedPRForwardedToPurchasing($request));
+        }
 
         return redirect()->route('purchase.requests.show', $request)
             ->with('success', 'Demande approuvée avec succès');
@@ -161,11 +168,11 @@ if ($directors->isEmpty()) {
         return redirect()->route('purchase.requests.show', $request)
             ->with('success', 'Demande rejetée avec succès');
     }
-    
+
     public function pendingApproval()
     {
         $this->authorize('viewAny', PurchaseRequest::class);
-        
+
         $pendingRequests = PurchaseRequest::with(['user', 'lines'])
             ->where('status', 'pending')
             ->latest()
