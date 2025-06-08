@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\RfqSentToSupplierNotification;
+use App\Notifications\RFQSentToSupplierNotification;
 use Illuminate\Support\Facades\Log;
 use App\Models\Offer;
 use Illuminate\Validation\Rule;
@@ -91,7 +91,7 @@ class RFQController extends Controller
         }
 
         $validated = $request->validate($validationRules);
-
+        
         try {
             DB::beginTransaction();
 
@@ -128,7 +128,7 @@ class RFQController extends Controller
                     // (sécurité, même si l'UI devrait le gérer)
                     if (in_array($supplier->id, $validated['suppliers_rfq']) && $supplier->contact_email) {
                         try {
-                            Notification::send($supplier, new RfqSentToSupplierNotification($rfq, $supplier, $emailSubject, $emailBody));
+                            Notification::send($supplier, new RFQSentToSupplierNotification($rfq, $supplier, $emailSubject, $emailBody));
                             $emailsSentCount++;
                         } catch (\Exception $e) {
                             Log::error("Erreur envoi email Rfq au fournisseur ID {$supplier->id}: " . $e->getMessage());

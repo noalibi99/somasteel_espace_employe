@@ -23,6 +23,7 @@ class User extends Authenticatable
         'matricule',
         'fonction',
         'service',
+        'projet',
         'type',
         'solde_conge',
         'responsable_hiarchique',

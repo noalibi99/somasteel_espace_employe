@@ -313,3 +313,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/updateSolde', [ProfilController::class, 'updateSolde']);
 
+// Fallback route for undefined URLs
+Route::fallback(function () {
+    return response()->view('not-found', [], 404);
+});
