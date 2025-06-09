@@ -122,42 +122,29 @@
                         @can('view-purchase-dashboard') {{-- Gate spécifique pour le dashboard --}}
                         <a
                             href="{{ route('purchase.rfq.dashboard') }}"
-                            class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('purchase.rfq.dashboard') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
-                        >
-                            <i class="fas fa-columns fa-fw"></i> {{-- Icône changée pour dashboard --}}
-                            Dashboard Achat (RFQ)
-                        </a>
-                        @endcan
-                        @can('viewAny', App\Models\RFQ::class) {{-- Policy pour la liste des RFQs --}}
-                        <a
-                            href="{{ route('purchase.rfqs.index') }}"
-                            class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs(['purchase.rfqs.index', 'purchase.rfqs.show', 'purchase.rfq.create', 'purchase.rfqs.edit', 'rfqs.offers.create', 'rfqs.offers.edit']) ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+                            class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs(['purchase.rfq.dashboard', 'purchase.rfqs.index']) ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
                         >
                             <i class="fas fa-file-signature fa-fw"></i>
-                            Demandes de Prix (RFQ)
+                            Demandes de Prix
                         </a>
                         @endcan
                     @endif
 
-                    {{-- Bons de Commande & Historique (Service Achat, Directeur, Compta, Admin, Ouvrier pour ses propres POs) --}}
-                    @can('viewAny', App\Models\PurchaseOrder::class)
-                    <a
-                        href="{{ route('purchase.orders.index') }}"
-                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs(['purchase.orders.index', 'purchase.orders.show', 'purchase.orders.create', 'purchase.orders.edit']) && !request()->routeIs('purchase.orders.history') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
-                    >
-                        <i class="fas fa-clipboard-list fa-fw"></i>
-                        Bons de Commande
-                    </a>
-                    {{-- L'ouvrier peut aussi voir l'historique de SES commandes --}}
-                    @if(Gate::allows('viewAny', App\Models\PurchaseOrder::class))
+                    {{-- Bons de Commande - Historique seulement (Tous les utilisateurs connectés avec filtrage approprié) --}}
+                    @can('viewHistory', App\Models\PurchaseOrder::class)
                     <a
                         href="{{ route('purchase.orders.history') }}"
-                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('purchase.orders.history') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors
+                            {{ request()->routeIs([
+                                'purchase.orders.history',
+                                'purchase.orders.show',
+                                'purchase.orders.edit',
+                                'purchase.orders.create'
+                            ]) ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
                     >
-                        <i class="fas fa-history fa-fw"></i>
-                        Historique Commandes
+                        <i class="fas fa-clipboard-list fa-fw"></i>
+                        Bons de Commandes
                     </a>
-                    @endif
                     @endcan
 
 
@@ -168,27 +155,28 @@
                         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs(['purchase.deliveries.dashboard', 'purchase.deliveries.index', 'purchase.deliveries.create', 'purchase.deliveries.show']) ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
                     >
                         <i class="fas fa-truck-loading fa-fw"></i>
-                        Réceptions (Magasin)
+                        Réceptions
                     </a>
                     @endcanany
 
-                    {{-- Facturation (Compta, Achat, Admin) --}}
+
                     {{-- Facturation (Compta, Achat, Admin) --}}
                     @canany(['viewAccountingDashboard', 'viewAny'], App\Models\Invoice::class)
-                     <a
+                    <a
                         href="{{ route('purchase.invoices.dashboard') }}"
-                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs(['purchase.invoices.dashboard', 'purchase.invoices.index', 'purchase.invoices.create', 'purchase.invoices.show', 'purchase.invoices.edit', 'purchase.invoices.recordPaymentForm']) && !request()->routeIs('purchase.payments.history') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
+                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors
+                            {{ request()->routeIs([
+                                'purchase.invoices.dashboard',
+                                'purchase.invoices.index',
+                                'purchase.invoices.create',
+                                'purchase.invoices.show',
+                                'purchase.invoices.edit',
+                                'purchase.invoices.recordPaymentForm',
+                                'purchase.payments.history'
+                            ]) ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
                     >
                         <i class="fas fa-file-invoice-dollar fa-fw"></i>
-                        Facturation Fournisseurs
-                    </a>
-                    {{-- NOUVEAU LIEN POUR L'HISTORIQUE DES PAIEMENTS --}}
-                    <a
-                        href="{{ route('purchase.payments.history') }}" {{-- Nouvelle route à créer --}}
-                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors {{ request()->routeIs('purchase.payments.history') ? 'bg-somasteel-orange/10 text-somasteel-orange' : 'text-secondary hover:bg-somasteel-orange/10 hover:text-somasteel-orange' }}"
-                    >
-                        <i class="fas fa-money-check-alt fa-fw"></i>
-                        Historique Paiements
+                        Facturation et Paiements
                     </a>
                     @endcanany
 

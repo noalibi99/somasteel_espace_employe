@@ -7,10 +7,13 @@
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <h1 class="text-2xl font-bold text-gray-900">Historique des Commandes d'Achat</h1>
         {{-- Peut-être un bouton pour retourner à la liste principale des BDC si différent --}}
-        <a href="{{ route('purchase.orders.index') }}"
+        {{-- No need for a button here as we are already on the history page. DELETE INDEX--}}
+        {{-- <a href="{{ route('purchase.orders.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
+            <i class="fas fa-arrow-left mr-2"></i> Retour à la liste des BDC
+        {{-- <a href="{{ route('purchase.orders.index') }}"
            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
             <i class="fas fa-clipboard-list mr-2"></i> Vue Standard BDC
-        </a>
+        </a> --}}
     </div>
 
     @include('layouts.partials.flash_messages')

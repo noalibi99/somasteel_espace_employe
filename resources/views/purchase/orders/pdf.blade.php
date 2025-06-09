@@ -38,8 +38,8 @@
                     <h1>BON DE COMMANDE</h1>
                     <strong>{{ config('app.name', 'SOMASTEEL') }}</strong><br>
                     {{-- Votre Adresse, Tel, Email, etc. --}}
-                    Adresse de votre entreprise<br>
-                    Tél: Votre numéro | Email: votre.email@example.com
+                    Km 16 route d’El Jadida, Casablanca 20232<br>
+                    Tél: +212 XXXXXXXXX | Email: contact@somasteel.ma
                 </div>
             </div>
         </div>
@@ -49,8 +49,9 @@
             <tr>
                 <td style="width:50%; border:0; vertical-align:top;">
                     <div class="supplier-info">
-                        <strong>Fournisseur :</strong><br>
-                        {{ $purchaseOrder->supplier->name }}<br>
+                        <strong>Fournisseur :</strong>
+                        {{ $purchaseOrder->supplier->company_name }}<br>
+                        {{ $purchaseOrder->supplier->contact_first_name.' '.$purchaseOrder->supplier->contact_last_name }}<br>
                         @if($purchaseOrder->supplier->contact_phone) Tél: {{ $purchaseOrder->supplier->contact_phone }}<br>@endif
                         @if($purchaseOrder->supplier->contact_email) Email: {{ $purchaseOrder->supplier->contact_email }}<br>@endif
                         {{-- Adresse du fournisseur si disponible --}}
@@ -61,7 +62,7 @@
                         <strong>N° BDC :</strong> {{ $purchaseOrder->po_number }}<br>
                         <strong>Date Commande :</strong> {{ $purchaseOrder->order_date->format('d/m/Y') }}<br>
                         @if($purchaseOrder->rfq)<strong>N° RFQ :</strong> RFQ#{{ $purchaseOrder->rfq->id }}<br>@endif
-                        <strong>Créé par :</strong> {{ $purchaseOrder->user->nom ?? 'N/A' }}
+                        <strong>Créé par :</strong> {{ $purchaseOrder->user->prénom.' '.$purchaseOrder->user->nom ?? 'N/A' }}
                     </div>
                 </td>
             </tr>

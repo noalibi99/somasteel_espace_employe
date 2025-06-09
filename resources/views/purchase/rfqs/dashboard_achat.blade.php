@@ -8,10 +8,10 @@
         <h1 class="text-2xl font-bold text-gray-900">Tableau de Bord Service Achat</h1>
         <a href="{{ route('purchase.rfqs.index') }}"
            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
-            <i class="fas fa-list-ul mr-2"></i> Voir tous les RFQs
+            <i class="fas fa-list-ul mr-2"></i> Voir tous les Demandes de Prix
         </a>
     </div>
-    <p class="text-sm text-gray-600">Liste des demandes d'achat approuvées attendant la création d'une Demande de Prix (RFQ).</p>
+    <p class="text-sm text-gray-600">Liste des demandes d'achat approuvées attendant la création d'une Demande de Prix.</p>
 
     @include('layouts.partials.flash_messages')
 
@@ -30,7 +30,7 @@
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
             <h3 class="text-lg leading-6 font-medium text-gray-900">
-                Demandes d'Achat Approuvées (Prêtes pour RFQ)
+                Demandes d'Achat Approuvées
             </h3>
         </div>
         <div class="border-t border-gray-200">

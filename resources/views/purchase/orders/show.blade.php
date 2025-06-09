@@ -17,7 +17,7 @@
             <a href="{{ route('purchase.orders.pdf', $purchaseOrder) }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" target="_blank">
                 <i class="fas fa-file-pdf mr-2"></i> PDF
             </a>
-            <a href="{{ route('purchase.orders.index') }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
+            <a href="{{ route('purchase.orders.history') }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
                 <i class="fas fa-list-ul mr-2"></i> Liste des BDC
             </a>
         </div>

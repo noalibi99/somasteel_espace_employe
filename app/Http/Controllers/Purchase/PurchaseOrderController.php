@@ -321,9 +321,8 @@ class PurchaseOrderController extends Controller
 
     public function history(Request $request)
     {
-        // Gate::authorize('viewAny', PurchaseOrder::class); // Ou une permission plus spécifique pour l'historique
-        // Pour l'instant, on gère la restriction par rôle directement dans la requête
-
+        Gate::authorize('viewHistory', PurchaseOrder::class);
+        
         $query = PurchaseOrder::with([
             'supplier',
             'user', // Créateur du PO (Service Achat)

@@ -10,12 +10,12 @@ class PurchaseOrderPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->isPurchase() || $user->isDirector() || $user->isAdmin() || $user->isComptable();
+        return $user->isRH() || $user->isPurchase() || $user->isDirector() || $user->isAdmin() || $user->isComptable();
     }
 
     public function view(User $user, PurchaseOrder $purchaseOrder): bool
     {
-        if ($user->isPurchase() || $user->isDirector() || $user->isAdmin() || $user->isComptable()) {
+        if ($user->isRH() || $user->isPurchase() || $user->isDirector() || $user->isAdmin() || $user->isComptable()) {
             return true;
         }
         // Le demandeur original via Rfq pourrait aussi voir le PO
@@ -50,6 +50,17 @@ class PurchaseOrderPolicy
         // Si approuvé ou directement si pas de workflow d'approbation interne
         return ($user->isPurchase() || $user->isAdmin()) &&
                 in_array($purchaseOrder->status, [PurchaseOrder::STATUS_DRAFT, PurchaseOrder::STATUS_APPROVED]);
+    }
+
+    /**
+     * Determine if user can view purchase order history
+     */
+    public function viewHistory(User $user): bool
+    {
+        // All authenticated users can view history (with appropriate filtering applied in controller)
+        // Purchase, Director, Admin, Comptable see all records
+        // Workers (ouvriers) see only their own records (filtered in controller)
+        return true;
     }
 
     // Ajoutez d'autres actions comme approveInternal, markAsAcknowledged, etc.

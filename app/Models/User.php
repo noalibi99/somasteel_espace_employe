@@ -108,12 +108,12 @@ class User extends Authenticatable
 
     public function isPurchase()
     {
-        return $this->type === 'purchase';
+        return strtolower($this->service) === 'achat';
     }
 
     public function isComptable()
     {
-        return $this->type === 'comptable';
+        return strtolower($this->service) === 'comptabilite';
     }
 
 

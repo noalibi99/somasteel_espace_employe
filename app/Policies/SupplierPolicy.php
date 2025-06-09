@@ -15,7 +15,7 @@ class SupplierPolicy
     public function viewAny(User $user): bool
     {
         // Par exemple, tous les utilisateurs du service achat, RH, admin, directeurs
-        return $user->isPurchase() || $user->isRH() || $user->isAdmin() || $user->isDirector();
+        return $user->isOuvrier() || $user->isPurchase() || $user->isRH() || $user->isAdmin() || $user->isDirector();
     }
 
     /**
@@ -26,7 +26,7 @@ class SupplierPolicy
     {
         // Généralement les mêmes que viewAny, ou tous les utilisateurs authentifiés si l'info n'est pas sensible.
         // Le "return true;" que vous aviez est très permissif.
-        return $user->isPurchase() || $user->isRH() || $user->isAdmin() || $user->isDirector();
+        return $user->isOuvrier() || $user->isPurchase() || $user->isRH() || $user->isAdmin() || $user->isDirector();
     }
 
     /**
