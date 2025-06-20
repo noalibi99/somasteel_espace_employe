@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Service;
 
-
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
+use Illuminate\Validation\ValidationException;
 
 class AnnuaireController extends Controller
 {
@@ -45,6 +48,8 @@ class AnnuaireController extends Controller
     public function updateResponsible($id, $depart, $projet)
     {
         try {
+            DB::beginTransaction();
+
             // Find the current responsible if exists and update their type to "ouvrier"
             $currentResponsible = User::where('service', $depart)
                 ->where('projet', $projet)
@@ -62,57 +67,120 @@ class AnnuaireController extends Controller
             $employee->update([
                 'type' => 'responsable',
             ]);
+            
             // Update the responsable_hiarchique for employees in the same service and project
             User::where('service', $depart)
                 ->where('projet', $projet)
                 ->update(['responsable_hiarchique' => $employee->matricule]);
 
+            DB::commit();
             return redirect()->back()->with('success', 'Responsable hiérarchique modifié avec succès.');
+            
+        } catch (QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Database error while updating responsible', [
+                'employee_id' => $id,
+                'service' => $depart,
+                'projet' => $projet,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->back()->with('error', 'Erreur de base de données lors de la modification du responsable hiérarchique.');
+            
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Erreur lors de la modification du responsable hiérarchique' . $e->getMessage());
+            DB::rollBack();
+            
+            Log::error('Unexpected error while updating responsible', [
+                'employee_id' => $id,
+                'service' => $depart,
+                'projet' => $projet,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->with('error', 'Une erreur inattendue s\'est produite lors de la modification du responsable hiérarchique.');
         }
     }
 
     public function storeService(Request $request)
     {
-        // Validate service data
-        $validatedData = $request->validate([
-            'service' => 'required|string|max:255',
-        ]);
-
         try {
+            // Validate service data
+            $validatedData = $request->validate([
+                'service' => 'required|string|max:255',
+            ]);
+
+            DB::beginTransaction();
+
             // Store the service (department) in your database
             $service = new Service();
             $service->nomService = $validatedData['service'];
             $service->save();
 
             // Call storeEmployee to save the user data after service creation
-            if ($this->storeEmployee($request)) {
+            $employeeCreated = $this->storeEmployee($request);
+            
+            if ($employeeCreated) {
+                DB::commit();
                 return redirect()->route('annuaire.index')->with('success', 'Département créé avec succès!');
+            } else {
+                DB::rollBack();
+                return redirect()->back()->withInput()->with('error', 'Erreur lors de la création de l\'employé pour le nouveau département.');
             }
 
+        } catch (ValidationException $e) {
+            // Validation errors - let Laravel handle these automatically
+            throw $e;
+            
+        } catch (QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Database error while creating service', [
+                'service_name' => $validatedData['service'] ?? 'unknown',
+                'error' => $e->getMessage(),
+                'data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            // Check for specific database constraints
+            if ($e->getCode() === '23000') { // Integrity constraint violation
+                if (str_contains($e->getMessage(), 'nomService')) {
+                    return redirect()->back()->withInput()
+                        ->with('error', 'Ce nom de département existe déjà. Veuillez choisir un nom différent.');
+                }
+            }
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Erreur de base de données lors de la création du département.');
+                
         } catch (Exception $e) {
-            $service->delete();
-            return redirect()->back()->withInput()->with('error', 'Erreur lors de la création du service: ' . $e->getMessage());
+            DB::rollBack();
+            
+            Log::error('Unexpected error while creating service', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Une erreur inattendue s\'est produite lors de la création du département.');
         }
     }
 
 
     public function deleteService(Request $request)
     {
-        // Validate input fields
-        $request->validate([
-            'project'    => 'required|string|exists:users,projet',
-            'nomService' => 'required|string|exists:users,service',
-        ]);
-    
-        
-
         try {
-            DB::beginTransaction(); // Start transaction
+            // Validate input fields
+            $validatedData = $request->validate([
+                'project'    => 'required|string|exists:users,projet',
+                'nomService' => 'required|string|exists:users,service',
+            ]);
+
+            DB::beginTransaction();
     
-            $project = $request->input('project');
-            $nomService = $request->input('nomService');
+            $project = $validatedData['project'];
+            $nomService = $validatedData['nomService'];
     
             // Fetch users related to this service in the specified project
             $users = User::where('service', $nomService)
@@ -123,7 +191,6 @@ class AnnuaireController extends Controller
                 $users->delete();
             }
             
-
             // Delete the service
             $deleted = Service::where('nomService', $nomService)->delete();
 
@@ -132,12 +199,43 @@ class AnnuaireController extends Controller
                 return redirect()->back()->with('error', 'Le département n\'existe pas ou ne peut pas être supprimé.');
             }
     
-            DB::commit(); // Commit transaction
+            DB::commit();
             return redirect()->back()->with('success', 'Département et ses utilisateurs supprimés avec succès.');
     
+        } catch (ValidationException $e) {
+            // Validation errors - let Laravel handle these automatically
+            throw $e;
+            
+        } catch (QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Database error while deleting service', [
+                'project' => $request->input('project'),
+                'service' => $request->input('nomService'),
+                'error' => $e->getMessage()
+            ]);
+            
+            // Check for foreign key constraints
+            if ($e->getCode() === '23000') {
+                return redirect()->back()
+                    ->with('error', 'Impossible de supprimer ce département car il contient des données liées.');
+            }
+            
+            return redirect()->back()
+                ->with('error', 'Erreur de base de données lors de la suppression du département.');
+                
         } catch (Exception $e) {
-            DB::rollBack(); // Rollback in case of an error
-            return redirect()->back()->with('error', 'Une erreur est survenue : ' . $e->getMessage());
+            DB::rollBack();
+            
+            Log::error('Unexpected error while deleting service', [
+                'project' => $request->input('project'),
+                'service' => $request->input('nomService'),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->with('error', 'Une erreur inattendue s\'est produite lors de la suppression du département.');
         }
     }
     public function showDepartment($projet, $depart)
@@ -212,13 +310,13 @@ class AnnuaireController extends Controller
 
             // Validate the request data
             $validatedData = $request->validate($rules);
-            // dd($request, $validatedData);
+
+            DB::beginTransaction();
 
             // Find the employee
             $employee = User::findOrFail($employee_id);
 
             // Update the employee with validated data
-            // dd($validatedData);
             $employee->update($validatedData);
             $employee->projet = $projet;
             $employee->refresh();
@@ -244,8 +342,6 @@ class AnnuaireController extends Controller
             }            
             
             //idem pour le directeur
-            
-
             if ($employee->type === 'directeur') {
                 $currentDirecteur = User::where('service', $employee->service)
                     ->where('projet', $employee->projet)
@@ -262,31 +358,78 @@ class AnnuaireController extends Controller
                     ->update(['directeur' => $employee->matricule]);
             }
             
+            DB::commit();
+            
             // Redirect back with a success message
-            return redirect()->route('annuaire.depart', [$employee->projet, $employee->service])->with('success', 'Informations modifiées avec succès');
+            return redirect()->route('annuaire.depart', [$employee->projet, $employee->service])
+                ->with('success', 'Informations modifiées avec succès');
+                
+        } catch (ValidationException $e) {
+            // Validation errors - let Laravel handle these automatically
+            throw $e;
+            
+        } catch (QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Database error while updating employee', [
+                'employee_id' => $employee_id,
+                'projet' => $projet,
+                'error' => $e->getMessage(),
+                'data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            // Check for specific database constraints
+            if ($e->getCode() === '23000') { // Integrity constraint violation
+                if (str_contains($e->getMessage(), 'matricule')) {
+                    return redirect()->back()->withInput()
+                        ->with('error', 'Ce matricule existe déjà. Veuillez utiliser un matricule différent.');
+                }
+                if (str_contains($e->getMessage(), 'email')) {
+                    return redirect()->back()->withInput()
+                        ->with('error', 'Cette adresse email est déjà utilisée.');
+                }
+            }
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Erreur de base de données lors de la modification des informations.');
+                
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error lors de la modification, veuillez vérifié les Information saisi');
+            DB::rollBack();
+            
+            Log::error('Unexpected error while updating employee', [
+                'employee_id' => $employee_id,
+                'projet' => $projet,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Une erreur inattendue s\'est produite lors de la modification des informations.');
         }
     }
 
     public function storeEmployee(Request $request)
     {
-        // Validate the incoming request
         try {
+            // Validate the incoming request
             $validatedData = $request->validate([
                 'nom' => 'required|string|max:255',
                 'prénom' => 'required|string|max:255',
                 'email' => 'nullable|string|email|max:255|unique:users',
                 'matricule' => 'required|string|max:50|unique:users',
-                'fonction' => 'string|max:255',
+                'fonction' => 'required|string|max:255',
                 'service' => 'required|string|max:255',
                 'projet' => 'required|string|max:100',
                 'type' => 'required|string|max:255',
-                'solde_conge' => 'max:100',
+                'solde_conge' => 'max:30',
                 'responsable_hiarchique' => 'nullable|string|max:255',
                 'directeur' => 'nullable|string|max:255',
                 'password' => 'required|string|min:6|confirmed',
             ]);
+
+            // Use database transaction for data consistency
+            DB::beginTransaction();
 
             // Create the new employee
             $user = new User();
@@ -299,11 +442,33 @@ class AnnuaireController extends Controller
             $user->projet = $validatedData['projet'];
             $user->type = $validatedData['type'];
             $user->solde_conge = $validatedData['solde_conge'] ?? null;
-            $user->responsable_hiarchique = $validatedData['responsable_hiarchique'] ?? DB::table('responsables')->where('service', $validatedData['service'])->where('projet', $validatedData['projet'])->first()->matricule;
-            $user->directeur = $validatedData['directeur'] ?? DB::table('directeurs')->where('service', $validatedData['service'])->where('projet', $validatedData['projet'])->first()->matricule;
+            
+            // Get responsable hiarchique if not provided
+            if (empty($validatedData['responsable_hiarchique'])) {
+                $responsable = User::where('service', $validatedData['service'])
+                    ->where('projet', $validatedData['projet'])
+                    ->where('type', 'responsable')
+                    ->first();
+                $user->responsable_hiarchique = $responsable ? $responsable->matricule : null;
+            } else {
+                $user->responsable_hiarchique = $validatedData['responsable_hiarchique'];
+            }
+            
+            // Get directeur if not provided
+            if (empty($validatedData['directeur'])) {
+                $directeur = User::where('service', $validatedData['service'])
+                    ->where('projet', $validatedData['projet'])
+                    ->where('type', 'directeur')
+                    ->first();
+                $user->directeur = $directeur ? $directeur->matricule : null;
+            } else {
+                $user->directeur = $validatedData['directeur'];
+            }
+            
             $user->password = bcrypt($validatedData['password']);
             $user->save();
 
+            // Update hierarchy if user is responsable or directeur
             if ($user->type === 'responsable') {
                 User::where('service', $validatedData['service'])
                     ->where('projet', $validatedData['projet'])
@@ -316,9 +481,51 @@ class AnnuaireController extends Controller
                     ->update(['directeur' => $user->matricule]);
             }
 
-            return redirect()->route('annuaire.depart', [$validatedData['projet'], $validatedData['service']])->with('success', 'Employee crée avec succès.');
+            DB::commit();
+
+            return redirect()->route('annuaire.depart', [$validatedData['projet'], $validatedData['service']])
+                ->with('success', 'Employee crée avec succès.');
+
+        } catch (ValidationException $e) {
+            // Validation errors - let Laravel handle these automatically
+            throw $e;
+            
+        } catch (QueryException $e) {
+            DB::rollBack();
+            
+            // Log the specific database error for debugging
+            Log::error('Database error while creating employee', [
+                'error' => $e->getMessage(),
+                'data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            // Check for specific database constraints
+            if ($e->getCode() === '23000') { // Integrity constraint violation
+                if (str_contains($e->getMessage(), 'matricule')) {
+                    return redirect()->back()->withInput()
+                        ->with('error', 'Ce matricule existe déjà. Veuillez utiliser un matricule différent.');
+                }
+                if (str_contains($e->getMessage(), 'email')) {
+                    return redirect()->back()->withInput()
+                        ->with('error', 'Cette adresse email est déjà utilisée.');
+                }
+            }
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Erreur de base de données. Veuillez vérifier vos données et réessayer.');
+                
         } catch (Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Erreur lors de la création vouliez ressayer plus tard! <br>' . $e->getMessage());
+            DB::rollBack();
+            
+            // Log unexpected errors for debugging
+            Log::error('Unexpected error while creating employee', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Une erreur inattendue s\'est produite. Veuillez réessayer plus tard.');
         }
     }
 
@@ -326,14 +533,60 @@ class AnnuaireController extends Controller
     public function destroyEmp($employee_id)
     {
         try {
+            DB::beginTransaction();
+            
             $employee = User::findOrFail($employee_id);
             $depart = $employee->service;
             $projet = $employee->projet;
+            
+            // Check if employee is a responsable or directeur and handle hierarchy updates
+            if ($employee->type === 'responsable') {
+                User::where('service', $depart)
+                    ->where('projet', $projet)
+                    ->update(['responsable_hiarchique' => null]);
+            }
+            
+            if ($employee->type === 'directeur') {
+                User::where('service', $depart)
+                    ->where('projet', $projet)
+                    ->update(['directeur' => null]);
+            }
+            
             $employee->delete();
+            
+            DB::commit();
 
-            return redirect()->route('annuaire.depart', [$projet, $depart])->with('success', 'Employee Supprimé avec succès!');
+            return redirect()->route('annuaire.depart', [$projet, $depart])
+                ->with('success', 'Employé supprimé avec succès!');
+                
+        } catch (QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Database error while deleting employee', [
+                'employee_id' => $employee_id,
+                'error' => $e->getMessage()
+            ]);
+            
+            // Check for foreign key constraints
+            if ($e->getCode() === '23000') {
+                return redirect()->back()
+                    ->with('error', 'Impossible de supprimer cet employé car il est lié à d\'autres données.');
+            }
+            
+            return redirect()->back()
+                ->with('error', 'Erreur de base de données lors de la suppression de l\'employé.');
+                
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error lors de la Suppression <br>' . $e->getMessage());
+            DB::rollBack();
+            
+            Log::error('Unexpected error while deleting employee', [
+                'employee_id' => $employee_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->with('error', 'Une erreur inattendue s\'est produite lors de la suppression de l\'employé.');
         }
     }
 
@@ -344,13 +597,41 @@ class AnnuaireController extends Controller
                 'new_password' => 'required|min:8|max:16',
                 'confirm_new_password' => 'required|same:new_password',
             ]);
+            
             $user = User::findOrFail($employee_id);
             $user->update([
                 'password' => bcrypt($validatedData['new_password']),
             ]);
+            
+            Log::info('Password changed successfully', [
+                'employee_id' => $employee_id,
+                'changed_by' => Auth::id() ?? 'unknown'
+            ]);
+            
             return redirect()->back()->with('success', 'Mot de passe changé avec succès.');
+            
+        } catch (ValidationException $e) {
+            // Validation errors - let Laravel handle these automatically
+            throw $e;
+            
+        } catch (QueryException $e) {
+            Log::error('Database error while changing password', [
+                'employee_id' => $employee_id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Erreur de base de données lors du changement de mot de passe.');
+                
         } catch (Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Erreur lors de la modification' . $e->getMessage());
+            Log::error('Unexpected error while changing password', [
+                'employee_id' => $employee_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->withInput()
+                ->with('error', 'Une erreur inattendue s\'est produite lors du changement de mot de passe.');
         }
     }
 

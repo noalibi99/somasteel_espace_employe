@@ -6,9 +6,9 @@
 <div class="space-y-6">
     <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900"> Demandes d'Achat</h1>
-        <a href="{{ route('purchase.requests.index') }}" 
+        <a href="{{ route('purchase.requests.index') }}"
        class="inline-flex mt-10 px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-semibold transition">
-        <i class="fas fa-arrow-left mr-2"></i> 
+        <i class="fas fa-arrow-left mr-2"></i>
     </a>
     </div>
 
@@ -27,10 +27,10 @@
         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
             <i class="fas fa-search"></i>
         </span>
-        <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="Rechercher..." 
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Rechercher..."
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-somasteel-orange/90 focus:border-somasteel-orange transition duration-150 ease-in-out"
         />
     </div>
@@ -74,7 +74,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->validator?->nom ?? '-' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-    <a href="{{ route('purchase.requests.show', $request) }}" 
+    <a href="{{ route('purchase.requests.show', $request) }}"
        class="inline-flex items-center px-1.5 py-0.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-somasteel-orange hover:bg-somasteel-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-somasteel-orange">
         <i class="fa fa-eye text-xs"></i>
     </a>
@@ -82,7 +82,7 @@
     <form method="POST" action="{{ route('purchase.requests.approve', $request) }}" class="inline-block ml-1">
         @csrf
         <button type="submit"
-            class="bg-green-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 
+            class="bg-green-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
             @if(!$currentUser->isDirector() || $request->status !== 'pending') opacity-50 cursor-not-allowed @endif"
             @disabled(!$currentUser->isDirector() || $request->status !== 'pending')>
             <i class="fa fa-check text-xs"></i>
@@ -92,7 +92,7 @@
     <form method="POST" action="{{ route('purchase.requests.reject', $request) }}" class="inline-block ml-1">
         @csrf
         <button type="submit"
-            class="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 
+            class="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
             @if(!$currentUser->isDirector() || $request->status !== 'pending') opacity-50 cursor-not-allowed @endif"
             @disabled(!$currentUser->isDirector() || $request->status !== 'pending')>
             <i class="fa fa-xmark text-xs"></i>

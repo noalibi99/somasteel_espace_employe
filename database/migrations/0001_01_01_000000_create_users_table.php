@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('prénom', 100);
             $table->string('fonction', 255);
             $table->string('service', 255);
-            $table->enum('type', ['ouvrier', 'responsable', 'rh', 'directeur', 'administrateur']);
+            $table->enum('type', ['ouvrier', 'responsable', 'rh', 'directeur', 'administrateur', 'purchase', 'magasinier', 'comptable'])->default('ouvrier');;
             $table->Double('solde_conge')->default(0);
             $table->string('responsable_hiarchique', 255)->nullable();
             $table->string('directeur', 255)->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->date('date_entrée')->nullable();
             $table->string('affectation', 255)->nullable();
             $table->unsignedBigInteger('equipe_id')->nullable(); // Ensure this matches the type of `equipes.id`
-    
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
